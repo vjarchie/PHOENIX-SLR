@@ -1,0 +1,41 @@
+# PHOENIX Sign Language Recognition Configuration
+
+# Data
+data:
+  data_dir: "data/phoenix2014-release"
+  feature_type: "fullFrame-210x260px"
+  max_frames: 300
+  
+# Model
+model:
+  type: "transformer"  # "transformer" or "cnn_transformer"
+  input_dim: 512       # Feature dimension after CNN backbone
+  d_model: 512         # Transformer hidden dimension
+  nhead: 8             # Number of attention heads
+  num_layers: 6        # Number of transformer encoder layers
+  dim_feedforward: 2048
+  dropout: 0.1
+
+# Training
+training:
+  epochs: 100
+  batch_size: 4
+  learning_rate: 0.0001
+  weight_decay: 0.01
+  max_grad_norm: 5.0
+  
+# Scheduler
+scheduler:
+  type: "cosine"
+  warmup_epochs: 5
+  
+# Checkpointing
+checkpoint:
+  dir: "checkpoints/transformer"
+  save_every: 5
+  
+# Device
+device: "cuda"
+
+
+
