@@ -250,5 +250,5 @@ This project is for academic purposes. The PHOENIX dataset has its own license t
 
 ---
 
-*Created: December 2024*  
+*Created: December 2025*  
 *Final WER: 50.91% (Hybrid CTC+Attention with ResNet-18)*

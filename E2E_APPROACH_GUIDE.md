@@ -686,6 +686,6 @@ def train_epoch(model, dataloader, optimizer, device, ctc_weight=0.3):
 
 *Document created from PHOENIX-SLR project achieving 50.91% WER*
 *Author: AI Assistant (Claude)*
-*Date: December 2024*
+*Date: December 2025*
 
 
