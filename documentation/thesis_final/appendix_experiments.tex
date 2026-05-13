@@ -1,0 +1,92 @@
+\chapter{EXPERIMENT EVOLUTION SUMMARY}
+
+\section{Purpose of This Appendix}
+
+This appendix summarizes the model families explored during the project using checkpoint metadata and training artifacts available in the repository. The table is included to make the experimentation process auditable and to justify the final model selection in the main text.
+
+\section{Checkpoint-Based Approach Comparison}
+
+\begin{table}[H]
+\centering
+\caption{Summary of Explored Approaches from Stored Checkpoints}
+\label{tab:checkpoint_summary}
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{2.9cm}p{1.5cm}p{2.8cm}X@{}}
+\toprule
+\textbf{Approach Family} & \textbf{Best Epoch} & \textbf{Recorded Best WER (\%)} & \textbf{Notes} \\
+\midrule
+Transformer (early baseline) & 2 & 91.28 & Unstable alignment behavior \\
+Hybrid (early) & -- & -- & No stable retained run metric in archived outputs \\
+I3D feature branch & 33 & 94.78 & Did not converge to useful quality \\
+End-to-end (e2e) branch & 2 & 95.42 & Early checkpoint indicates unstable run \\
+Improved branch & 49 & 60.40 & Better than early baselines \\
+ResNet-18 branch & 89 & 51.44 & Best archived branch checkpoint (resnet18 best checkpoint file) \\
+VAC family (single implementation, multiple runs) & 35 & 61.43 & Same VAC code path; best result across internal runs \\
+\bottomrule
+\end{tabularx}
+\endgroup
+\end{table}
+
+\noindent\textbf{Interpretation note:} WER values above 100\% are possible in sequence tasks when insertion errors are high. This table summarizes archived branch-level checkpoint outcomes and does not replace the final reported thesis result. The final hybrid system performance reported in Chapter 5 is 50.91\% test WER. Some checkpoint files store WER as a fraction (for example, $0.5144 \rightarrow 51.44\%$), while others store percentage directly.
+
+\section{Implementation-Oriented Approach Matrix}
+
+Table~\ref{tab:config_delta} summarizes the approaches that were actually implemented in this repository and aligned with literature-guided design choices.
+
+\begin{table}[H]
+\centering
+\caption{Implemented Approach Matrix Across Literature-Guided Variants}
+\label{tab:config_delta}
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{2.2cm}Xp{3.2cm}X@{}}
+\toprule
+\textbf{Approach} & \textbf{Research-Motivated Design} & \textbf{Repository Implementation} & \textbf{Experiment Intent} \\
+\midrule
+Transformer baseline & Alignment-focused sequence modeling from CTC-oriented literature & train.py, train\_text2gloss.py & Establish baseline behavior and collapse risk profile \\
+Hybrid CTC+Attention & Joint objective inspired by hybrid CTC-attention research & train\_hybrid.py & Improve stability and sequence quality under limited resources \\
+End-to-end branch & Unified visual-to-gloss training path for direct pipeline comparison & train\_e2e.py & Compare direct end-to-end optimization against modular variants \\
+Improved hybrid & Hybrid training with stronger augmentation and optimization controls & train\_improved.py & Reduce overfitting and improve generalization on constrained hardware \\
+I3D branch & Spatiotemporal feature-transfer strategy based on video-model literature & train\_i3d.py, i3d model source file & Evaluate whether stronger video features improve CSLR robustness \\
+VAC family & Visual alignment constraint objective for alignment regularization & train\_vac.py & Mitigate alignment drift and blank-dominant collapse trends \\
+\bottomrule
+\end{tabularx}
+\endgroup
+\end{table}
+
+\noindent\textbf{Scope note:} This matrix includes only approaches with explicit code implementations in the repository.
+
+\section{Suggested Extended Logging for Future Iterations}
+
+To strengthen future thesis-grade reproducibility, each run should store a unified experiment card containing:
+\begin{itemize}
+    \item complete model hyperparameters,
+    \item optimizer and scheduler settings,
+    \item augmentation flags,
+    \item split-level metrics (dev/test WER, insertion/deletion/substitution rates),
+    \item checkpoint hash and script version.
+\end{itemize}
+
+Such standardized tracking would support cleaner cross-run comparisons and reduce ambiguity in multi-branch experiment narratives.
+
+\section{Why These Approaches Were Explored}
+
+\begin{itemize}
+    \item \textbf{Pure/early CTC-transformer baseline:} included to test alignment-only learning behavior motivated by CTC literature.\cite{graves2006connectionist}
+    \item \textbf{Hybrid CTC-attention objective:} explored based on hybrid objective evidence from sequence modeling literature.\cite{watanabe2017hybrid} The design also followed sign-language transformer work.\cite{camgoz2020sign}
+    \item \textbf{VAC family:} tested to examine alignment-constraint benefits reported in CSLR.\cite{zhu2021visual}
+    \item \textbf{I3D feature branch:} included because inflated 3D ConvNet features have shown strong transfer for video understanding.\cite{carreira2017quo}
+    \item \textbf{Improved hybrid branch:} explored to reduce overfitting through enhanced temporal augmentation and gradient accumulation under constrained hardware.
+\end{itemize}
+
+\section{Reproducibility Artifacts}
+
+The following project artifacts support reproducibility of the experiment-evolution narrative:
+\begin{itemize}
+    \item Checkpoint folders under \texttt{checkpoints/} for each model family.
+    \item Training logs including \texttt{training\_log\_vac.jsonl}.
+    \item Configuration files (where available) under model-specific checkpoint folders.
+\end{itemize}

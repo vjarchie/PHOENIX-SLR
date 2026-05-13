@@ -1,0 +1,69 @@
+\chapter{THEORETICAL FOUNDATIONS}
+
+\section{Introduction to Sequence Extraction}
+
+Continuous sign language recognition requires joint modeling of spatial information (within each frame) and temporal information (across frame sequences). The core theoretical components used in this thesis are convolutional feature extraction, self-attention based sequence modeling, and probabilistic alignment learning.
+
+\section{Deep Spatial Convolution and Residual Links}
+
+The visual feature extraction stage uses convolutional neural networks (CNNs). A standard convolution applies learnable kernels $K$ over input image channels $I$:
+\begin{equation}
+(I * K)(i,j) = \sum_m \sum_n I(i-m, j-n) K(m,n)
+\end{equation}
+
+Deep stacks of convolutional layers learn hierarchical representations, progressing from low-level edges to higher-level semantic patterns. In very deep networks, optimization may degrade due to vanishing gradients. Residual learning alleviates this by introducing identity shortcuts so each block learns a residual mapping $F(x)$:
+\begin{equation}
+H(x) = F(x) + x
+\end{equation}
+
+This formulation improves gradient flow and enables stable training of deeper visual encoders. In this work, a ResNet-18 backbone is used to produce compact frame-level feature vectors.
+
+\section{The Transformer Attention Architecture}
+
+Temporal context is modeled using transformer layers rather than recurrent networks. Self-attention enables direct interaction between distant time steps and supports efficient parallel computation.
+
+For an input sequence projected into Query ($Q$), Key ($K$), and Value ($V$) spaces, attention is computed as:
+\begin{equation}
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+\end{equation}
+
+The scaling factor $\sqrt{d_k}$ stabilizes softmax values for high-dimensional embeddings. Since attention alone is permutation-invariant, positional encoding is added to inject temporal order:
+\begin{equation}
+PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d_{model}})
+\end{equation}
+\begin{equation}
+PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}})
+\end{equation}
+
+\section{Connectionist Temporal Classification (CTC)}
+
+Alignment between long frame sequences and shorter gloss sequences is handled using Connectionist Temporal Classification (CTC). CTC computes sequence likelihood by marginalizing over all valid alignment paths $\pi$ that map inputs to target sequence $Y$, including blank symbol $\emptyset$:
+\begin{equation}
+L_{CTC} = -\ln P(Y|X) = -\ln \sum_{\pi \in \Phi(Y)} \prod_{t=1}^{T} y_{\pi_t}^t
+\end{equation}
+
+This objective enables end-to-end alignment learning without frame-level annotations.
+
+\section{Joint Objective Interpretation}
+
+The hybrid learning objective combines complementary inductive biases:
+\begin{itemize}
+    \item The CTC term encourages monotonic frame-to-gloss alignment under weak supervision.
+    \item The decoder cross-entropy term encourages sequence consistency and contextual token dependency modeling.
+\end{itemize}
+
+In practical terms, the objective can be interpreted as a weighted multi-task optimization problem where one branch promotes alignment robustness and the other branch promotes sequence-level fluency. Let
+\begin{equation}
+L = \lambda_{CTC}L_{CTC} + \lambda_{CE}L_{CE}, \quad \lambda_{CTC}+\lambda_{CE}=1.
+\end{equation}
+Increasing $\lambda_{CTC}$ emphasizes alignment supervision, while increasing $\lambda_{CE}$ emphasizes autoregressive sequence modeling. The selected balance in this thesis is chosen to reduce blank-dominant behavior while retaining alignment signal.
+
+\section{Evaluation Metric Foundation}
+
+The primary evaluation metric is Word Error Rate (WER), computed through edit operations between reference and predicted gloss sequences:
+\begin{equation}
+WER = \frac{S + D + I}{N},
+\end{equation}
+where $S$ is substitutions, $D$ is deletions, $I$ is insertions, and $N$ is the number of reference tokens.
+
+WER is appropriate for CSLR because it directly measures sequence-level recognition quality and penalizes both missing and spurious gloss predictions. In addition to aggregate WER, monitoring blank-token behavior during training provides useful diagnostic evidence for identifying unstable optimization regimes.

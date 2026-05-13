@@ -1,0 +1,57 @@
+\chapter{INTRODUCTION}
+
+\section{Background and Motivation}
+
+According to global public-health estimates, a large deaf and hard-of-hearing population depends on sign language as a primary mode of communication. Sign language is a complete linguistic system with its own grammar and discourse structure, and it communicates meaning through coordinated manual and non-manual cues. In practice, a persistent shortage of trained interpreters creates communication barriers across education, healthcare, governance, and routine social interaction.
+
+Recent advances in deep learning have made automated sign language processing increasingly feasible. Early systems were mostly designed for isolated sign recognition in constrained environments. However, practical communication requires recognition of continuous sign streams in which sign boundaries are not explicitly marked. Continuous Sign Language Recognition (CSLR) therefore represents a substantially harder problem than isolated recognition.
+
+\section{The Core Technical Challenges}
+
+Transitioning from isolated gestures to continuous sentence-level recognition introduces multiple technical challenges:
+
+\begin{itemize}
+    \item \textbf{Implicit Segmentation}: Continuous videos do not provide explicit frame-level sign boundaries, so alignment must be learned from weak supervision.
+    \item \textbf{Co-articulation}: The appearance of a sign depends on surrounding signs, which changes visual trajectories and increases ambiguity.
+    \item \textbf{Signer Variability}: Signing style, speed, body proportions, and camera conditions vary significantly across subjects.
+    \item \textbf{Occlusion and Motion Blur}: Fast articulation and hand-face overlap often hide discriminative visual details.
+    \item \textbf{Limited Data}: Compared with speech benchmarks, publicly available CSLR datasets are relatively small, increasing overfitting risk for high-capacity models.
+\end{itemize}
+
+\section{Problem Statement}
+
+A central bottleneck in CSLR is temporal alignment between long video sequences and shorter gloss sequences. Pure Connectionist Temporal Classification (CTC) formulations are attractive because they avoid explicit frame-level annotations, but they can become unstable in low-resource settings. Prior work reports CTC blank-dominant behavior (often called collapse), where the model over-predicts blank symbols and fails to produce informative gloss outputs.\cite{graves2006connectionist} In addition, long-range temporal dependencies remain difficult to model with purely alignment-driven objectives.
+
+Therefore, this work targets a hybrid objective that combines alignment learning and sequence modeling, and extends the recognition pipeline toward a bidirectional assistive framework.
+
+\section{Objectives}
+
+The objectives of this thesis are:
+\begin{enumerate}
+    \item Develop a hybrid CSLR architecture that combines a CNN visual backbone with transformer-based sequence modeling and joint CTC/cross-entropy supervision.
+    \item Evaluate the model on RWTH-PHOENIX-Weather 2014 under practical GPU memory constraints and report reproducible WER performance.
+    \item Design and implement a bidirectional assistive prototype integrating sign-to-text recognition and text-to-sign retrieval.
+    \item Demonstrate system usability through an interactive, multithreaded desktop interface.
+\end{enumerate}
+
+\section{Scope and Delimitations}
+
+The scope of this thesis is restricted to gloss-level continuous sign language recognition on the RWTH-PHOENIX-Weather 2014 benchmark and a practical bidirectional prototype for assistive communication. The following delimitations are explicitly acknowledged:
+\begin{itemize}
+    \item The recognition model is evaluated on a single benchmark corpus with domain-specific content (weather broadcast context).
+    \item The reverse communication module is retrieval-based rather than fully generative.
+    \item Training is performed under limited GPU memory, which constrains batch size and temporal context length.
+    \item The emphasis is on robust baseline construction, reproducible implementation, and practical usability rather than state-of-the-art leaderboard optimization.
+\end{itemize}
+
+\section{Thesis Organization}
+
+The remainder of the thesis is organized as follows:
+\begin{itemize}
+    \item Chapter 2 reviews prior work in CSLR, from classical pipelines to transformer and hybrid objective formulations.
+    \item Chapter 3 summarizes the theoretical foundations of convolutional encoding, self-attention, and Connectionist Temporal Classification.
+    \item Chapter 4 presents the proposed hybrid architecture and its training objective design.
+    \item Chapter 5 details implementation decisions, augmentation policy, optimization protocol, and experimental results.
+    \item Chapter 6 presents the bidirectional deployment prototype and system-level integration aspects.
+    \item Chapter 7 concludes the thesis and outlines future research directions.
+\end{itemize}

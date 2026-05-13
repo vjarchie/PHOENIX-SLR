@@ -1,0 +1,69 @@
+\chapter{LITERATURE REVIEW}
+
+\section{Evolution of Sign Language Recognition}
+
+Automatic sign language recognition has evolved from sensor-based systems to modern vision-based deep learning pipelines. Early glove-based approaches offered controlled measurements but were intrusive and unsuitable for scalable deployment. Later vision-based methods using handcrafted features and classical classifiers reduced instrumentation requirements, but performance remained limited in unconstrained settings with variable lighting, backgrounds, and signer style.
+
+\section{The Deep Learning Revolution}
+
+The introduction of deep convolutional neural networks (CNNs) reduced dependence on handcrafted descriptors by learning hierarchical spatial features directly from image data. A major step toward large-vocabulary CSLR was the CNN-HMM framework of Koller et al.,\cite{koller2015continuous} which adapted sequence modeling concepts from automatic speech recognition. Although influential, HMM-based systems require carefully engineered state-transition assumptions and constrained alignment structure.
+
+\section{Connectionist Temporal Classification (CTC)}
+
+Connectionist Temporal Classification (CTC) \cite{graves2006connectionist} addressed explicit alignment requirements by summing over all valid alignment paths between frame sequences and target tokens. This made end-to-end training feasible without frame-level annotation. However, in long and noisy visual sequences, CTC can become blank-dominant, especially under limited data and weak contextual modeling. In practical use, CTC-only decoding is computationally attractive because it avoids autoregressive token-by-token decoding, but this efficiency can come with reduced contextual sequence modeling capacity.
+
+\section{Attention Mechanisms and Transformers}
+
+Transformer-based CSLR models improved long-range temporal modeling through self-attention. Camgöz et al.\cite{camgoz2020sign} demonstrated that joint recognition and translation pipelines can benefit from transformer encoders and decoders. Zhu et al.\cite{zhu2021visual} introduced visual alignment constraints to stabilize frame-to-token learning, while subsequent work including Hu et al.\cite{hu2023continuous} further improved robustness by integrating stronger temporal correlation and hybrid supervision strategies. Relative to earlier pipelines, these approaches can model richer sequence dependencies, but they typically increase memory demand and training sensitivity.
+
+These developments motivate the approach adopted in this thesis: a hybrid architecture that retains CTC-based alignment learning while adding autoregressive decoding supervision to improve optimization stability and sequence quality.
+
+\section{Comparative Perspective on Prior Methods}
+
+For clarity, Table~\ref{tab:lit_compare} summarizes the methodological progression relevant to this thesis.
+
+\begin{table}[H]
+\centering
+\caption{Comparative Summary of Relevant CSLR Method Families}
+\label{tab:lit_compare}
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{2.1cm}p{2.5cm}X X p{1.7cm}@{}}
+\toprule
+\textbf{Method Family} & \textbf{Representative Works} & \textbf{Strengths} & \textbf{Common Limitations} & \textbf{Compute Trend} \\
+\midrule
+CNN-HMM pipelines & Koller et al.\cite{koller2015continuous} & Strong alignment priors; interpretable sequence states & Rigid alignment assumptions; complex state design & Moderate \\
+
+Pure CTC end-to-end models & Graves et al.\cite{graves2006connectionist} & No frame-level labels required; simple objective & Blank-dominant behavior in low-resource and long-sequence settings & Lower \\
+
+Transformer-based CSLR & Camgöz et al.\cite{camgoz2020sign} & Better long-range temporal modeling; parallelizable sequence processing & Data-hungry; may still require alignment stabilizers & Higher \\
+
+Hybrid / constrained objectives & Watanabe et al.,\cite{watanabe2017hybrid} Zhu et al.,\cite{zhu2021visual} Hu et al.\cite{hu2023continuous} & Improved optimization stability; better balance of alignment and language modeling & Additional hyperparameter sensitivity and training complexity & Higher \\
+\bottomrule
+\end{tabularx}
+\endgroup
+\end{table}
+
+\noindent The compute/memory trend column is qualitative and reflects relative training and inference complexity reported in representative method families, not a controlled benchmark measured in this thesis.
+
+\section{Research Gap and Motivation for the Present Work}
+
+Despite substantial progress, two practical gaps remain for M.Tech-level deployable systems. First, many high-performing methods assume larger compute budgets and broader hyperparameter sweeps than are feasible in constrained academic environments. Second, literature often emphasizes benchmark recognition accuracy but does not consistently extend the system into a usable bidirectional assistive workflow.
+
+From a comparative viewpoint, prior hybrid architectures cited here focused primarily on improving recognition metrics, while bidirectional deployment support is less emphasized in these references. In many published pipelines, sign-to-gloss decoding is the primary target and reverse communication support is treated as a separate systems problem. This creates a practical gap between algorithmic performance and end-user assistive utility.
+
+Accordingly, this thesis targets a balanced contribution: a stable hybrid CSLR baseline under constrained resources, accompanied by a practical bidirectional prototype that demonstrates integration beyond offline evaluation. This positioning is intentionally implementation-oriented and does not claim state-of-the-art benchmark performance.
+
+\section{Literature-Guided Experimental Decisions}
+
+The exploration strategy used in this thesis follows a literature-guided progression:
+\begin{itemize}
+    \item Start with alignment-centric baselines from CTC literature.\cite{graves2006connectionist}
+    \item Introduce hybrid objectives motivated by prior hybrid CTC-attention gains in sequence recognition.\cite{watanabe2017hybrid}
+    \item Adopt transformer-based CSLR design patterns based on sign-language-specific evidence.\cite{camgoz2020sign}
+    \item Evaluate alignment-constraint variants inspired by VAC.\cite{zhu2021visual}
+    \item Assess stronger video feature transfer choices such as I3D-style representations.\cite{carreira2017quo}
+\end{itemize}
+
+This progression is reflected in the checkpoint evolution summarized later in the thesis appendix.

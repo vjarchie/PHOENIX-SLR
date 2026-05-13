@@ -248,6 +248,18 @@ def evaluate(model, dataloader, device, idx2gloss, blank_idx=2, pad_idx=0):
     return avg_loss, wer
 
 
+def set_seed(seed=42):
+    """Set random seeds for reproducibility."""
+    import random
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train Hybrid CTC+Attention Model")
     parser.add_argument('--data_dir', type=str, default='data/phoenix2014-release')
@@ -262,8 +274,13 @@ def main():
     parser.add_argument('--ctc_weight', type=float, default=0.3)
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--resume', action='store_true')
+    parser.add_argument('--seed', type=int, default=42, help='Random seed for reproducibility')
     
     args = parser.parse_args()
+    
+    # Set random seed
+    set_seed(args.seed)
+    logger.info(f"Random seed: {args.seed}")
     
     # Setup
     device = torch.device(args.device if torch.cuda.is_available() else 'cpu')
@@ -388,11 +405,18 @@ def main():
     pad_idx = train_dataset.vocab['<pad>']
     
     for epoch in range(start_epoch, args.epochs):
-        # Dynamic loss weighting (optional: more CE early, more CTC later)
-        # Uncomment to use dynamic weighting:
-        # progress = epoch / args.epochs
-        # model.ctc_weight = 0.1 + 0.4 * progress  # 0.1 -> 0.5
-        # model.ce_weight = 1.0 - model.ctc_weight
+        # CTC warmup: start with pure CE, gradually introduce CTC
+        ctc_warmup_epochs = 5
+        if epoch < ctc_warmup_epochs:
+            # Linear ramp: 0 -> target_ctc_weight over warmup epochs
+            ctc_progress = epoch / ctc_warmup_epochs
+            model.ctc_weight = args.ctc_weight * ctc_progress
+            model.ce_weight = 1.0 - model.ctc_weight
+        else:
+            model.ctc_weight = args.ctc_weight
+            model.ce_weight = 1.0 - args.ctc_weight
+        
+        logger.info(f"Epoch {epoch+1}: CTC weight = {model.ctc_weight:.3f}, CE weight = {model.ce_weight:.3f}")
         
         # Train
         train_loss, ctc_loss, ce_loss, blank_ratio = train_epoch(

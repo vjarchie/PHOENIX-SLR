@@ -1,0 +1,198 @@
+% ========================================
+%  TITLE PAGE
+% ========================================
+\thispagestyle{empty}
+\begin{center}
+
+{\Large \bfseries REAL-TIME BIDIRECTIONAL CONTINUOUS SIGN LANGUAGE INTERPRETATION USING DEEP LEARNING}
+
+\vspace{2cm}
+
+A Thesis\\
+Presented to\\
+The Academic Faculty
+
+\vspace{2cm}
+
+by
+
+\vspace{1cm}
+
+{\large \bfseries ARCHIE NARAYAN}
+
+\vspace{2cm}
+
+In Partial Fulfillment\\
+of the Requirements for the M. Tech. Degree
+
+\vspace{2cm}
+
+{\large \bfseries Indian Institute of Technology Patna}\\
+DECEMBER 2025
+
+\vspace{1.5cm}
+
+Copyright \textcopyright\ Archie Narayan 2025\\
+All Rights Reserved
+
+\end{center}
+
+\clearpage
+
+% ========================================
+%  DEDICATION (Optional)
+% ========================================
+\thispagestyle{empty}
+\vspace*{3cm}
+\begin{center}
+\textit{To my beloved parents and family,\\ for their endless support and encouragement.}
+\end{center}
+\clearpage
+
+% ========================================
+%  EVALUATION COMMITTEE APPROVAL 
+% ========================================
+\thispagestyle{empty}
+\begin{center}
+{\Large \bfseries INDIAN INSTITUTE OF TECHNOLOGY PATNA}\\[0.5cm]
+{\large Evaluation Committee Approval}
+
+\vspace{0.5cm}
+
+of a Thesis submitted by
+
+\vspace{0.5cm}
+
+ARCHIE NARAYAN
+\end{center}
+
+\vspace{1cm}
+
+The thesis of Archie Narayan has been read, found satisfactory and approved by the following DPPC committee members.
+
+\vspace{1.5cm}
+
+\noindent Name: 1\rule{5cm}{0.4pt}, Supervisor \hfill Date: \rule{4cm}{0.4pt}\\
+
+\noindent Name: 2\rule{5cm}{0.4pt}, Member \hfill Date: \rule{4cm}{0.4pt}\\
+
+\noindent Name: 3\rule{5cm}{0.4pt}, Member \hfill Date: \rule{4cm}{0.4pt}\\
+
+\clearpage
+
+% ========================================
+%  CERTIFICATE
+% ========================================
+\thispagestyle{empty}
+\begin{center}
+{\Large \bfseries Certificate}\\[1cm]
+\end{center}
+
+\noindent This is to certify that the thesis entitled ``REAL-TIME BIDIRECTIONAL CONTINUOUS SIGN LANGUAGE INTERPRETATION USING DEEP LEARNING'', submitted by ARCHIE NARAYAN to Indian Institute of Technology Patna, is a record of bonafide research work under my (our) supervision and I (we) consider it worthy of consideration for the degree of Master of Technology of this Institute. This work or a part has not been submitted to any university/institution for the award of degree/diploma. The thesis is free from plagiarized material.
+
+\vspace{3cm}
+
+\noindent \rule{5cm}{0.4pt} \\
+Prajna P.N. \\
+Date: \rule{3.2cm}{0.4pt}
+
+\clearpage
+
+% ========================================
+%  DECLARATION
+% ========================================
+\thispagestyle{empty}
+\begin{center}
+{\Large \bfseries Declaration}\\[1cm]
+\end{center}
+
+\noindent I certify that\\
+a. The work contained in this thesis is original and has been done by myself under the general supervision of my supervisor/s.\\
+b. The work has not been submitted to any other Institute for degree or diploma.\\
+c. I have followed the Institute norms and guidelines and abide by the regulation as given in the Ethical Code of Conduct of the Institute.\\
+d. Whenever I have used materials (data, theory and text) from other sources, I have given due credit to them by citing them in the text of the thesis and giving their details in the reference section.\\
+e. The thesis document has been thoroughly checked to exclude plagiarism.
+
+\vspace{3cm}
+
+\noindent \rule{5cm}{0.4pt}\\
+Signature of the Student\\
+Roll No: 24A03RES119
+
+\clearpage
+
+% ========================================
+%  ACKNOWLEDGEMENTS
+% ========================================
+\addcontentsline{toc}{chapter}{Acknowledgements}
+\begin{center}
+{\Large \bfseries ACKNOWLEDGEMENTS}\\[1cm]
+\end{center}
+
+I would like to express my sincere gratitude to my supervisor, Prajna P.N., for invaluable guidance, patience, and support throughout this project. I also thank the Indian Institute of Technology Patna for providing the computational resources necessary for training the deep learning models used in this research.
+
+Special thanks to the creators of the RWTH-PHOENIX-Weather 2014 dataset for making their high-quality annotated data publicly available for research purposes, which formed the foundational basis of this work.
+
+\clearpage
+
+% ========================================
+%  TABLE OF CONTENTS AND LISTS
+% ========================================
+\setstretch{1.2} % Compress line spacing slightly for ToC
+\tableofcontents
+\clearpage
+
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+\clearpage
+
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+\clearpage
+
+\addcontentsline{toc}{chapter}{List of Symbols and Abbreviations}
+\begin{center}
+{\Large \bfseries LIST OF SYMBOLS AND ABBREVIATIONS}\\[1cm]
+\end{center}
+\begin{longtable}{@{}ll@{}}
+\textbf{Abbreviation} & \textbf{What it means}\\
+\midrule
+ASR & Automatic Speech Recognition \\
+CNN & Convolutional Neural Network \\
+CSLR & Continuous Sign Language Recognition\\
+CTC & Connectionist Temporal Classification\\
+DGS & German Sign Language (Deutsche Gebärdensprache) \\
+FPS & Frames Per Second\\
+GAN & Generative Adversarial Network\\
+HMM & Hidden Markov Model\\
+RNN & Recurrent Neural Network \\
+SLR & Sign Language Recognition\\
+SLP & Sign Language Production\\
+SOTA & State of the Art\\
+VAC & Visual Alignment Constraint\\
+WER & Word Error Rate\\
+\end{longtable}
+\clearpage
+\setstretch{1.5} % Restore line spacing
+
+% ========================================
+%  ABSTRACT
+% ========================================
+\addcontentsline{toc}{chapter}{Abstract}
+\begin{center}
+{\Large \bfseries ABSTRACT}\\[1cm]
+\end{center}
+
+Sign language serves as the primary mode of communication for over 70 million deaf and hard-of-hearing individuals worldwide. However, the communication barrier between sign language users and the hearing population remains a significant challenge. This project presents a comprehensive deep learning-based system for bidirectional continuous sign language interpretation, enabling seamless communication in both directions.
+
+The system comprises two main pipelines: (1) Sign Language Recognition (SLR), which converts continuous sign language videos to text, and (2) Sign Language Production (SLP), which converts text or speech to sign language videos. For the SLR component, a Hybrid CTC and Attention Transformer architecture was implemented and trained on the RWTH-PHOENIX-Weather 2014 dataset. This architecture achieved a Word Error Rate (WER) of 50.91\% on the test set. By combining a pretrained ResNet-18 Convolutional Neural Network backbone with a 6-layer Transformer encoder, and utilizing joint CTC and cross-entropy losses, the common issue of CTC collapse was successfully mitigated.
+
+For the SLP component, a retrieval-based video synthesis system was developed. This system translates text to gloss sequences and retrieves corresponding sign video segments from an indexed database, executing smooth real-time text-to-sign conversion. Live interactive demonstrations utilizing standard web cameras validate the real-world functionality of the proposed framework.
+
+\vspace{1cm}
+\noindent \textbf{Keywords}: Sign Language Recognition, Continuous Sign Language, Connectionist Temporal Classification, Transformer, Attention Mechanism, Deep Learning, PHOENIX-2014
+
+\vspace{2cm}
+
+\noindent \textbf{Student}: Archie Narayan \hfill \textbf{Supervisor}: Prajna P.N.
+\clearpage

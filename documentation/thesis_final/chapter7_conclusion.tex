@@ -1,0 +1,55 @@
+\chapter{CONCLUSION AND FUTURE WORK}
+
+\section{Concluding Remarks}
+
+This thesis presented a hybrid CTC-attention framework for continuous sign language recognition on the RWTH-PHOENIX-Weather 2014 benchmark. The work addressed a key practical challenge of low-resource CSLR training: instability of purely alignment-driven objectives under long and variable input sequences.
+
+By combining CTC alignment supervision with autoregressive cross-entropy decoding, the proposed model achieved stable optimization behavior and reduced collapse tendencies. Under constrained hardware settings, the final system attained a best test Word Error Rate of 50.91\%, demonstrating the viability of the approach as a strong baseline for further improvements.
+
+\section{Scope and Validity Notes}
+
+The conclusions in this thesis should be interpreted within the following bounds:
+\begin{itemize}
+    \item recognition results are reported for RWTH-PHOENIX-Weather 2014 and were not validated on additional CSLR corpora in this work,
+    \item the reverse communication module is retrieval-based and was evaluated functionally rather than with a dedicated generative-quality benchmark,
+    \item deployment latency and throughput were not reported as standalone quantitative metrics.
+\end{itemize}
+
+Within these limits, the reported findings are intended as evidence for a reproducible engineering baseline under constrained compute conditions.
+
+\section{Contribution Summary}
+
+The major contributions of this thesis are:
+\begin{itemize}
+    \item Design and implementation of a hybrid ResNet-transformer CSLR model with dual CTC and attention objectives.
+    \item A practical training protocol including augmentation, warmup-cosine scheduling, label smoothing, and gradient clipping for low-resource robustness.
+    \item Empirical validation of model performance on RWTH-PHOENIX-Weather 2014 with reported development and test WER metrics.
+    \item Development of a bidirectional prototype interface integrating sign-to-text recognition and text-to-sign retrieval for assistive communication flow.
+\end{itemize}
+
+In addition to final-model reporting, this thesis documents a full experiment-evolution trajectory across multiple model families and objective variants. This increases transparency of research decisions and supports reproducibility.
+
+\section{Objective-Wise Executive Conclusion}
+
+The objective-wise outcomes, aligned with Chapter 1, are summarized below:
+\begin{enumerate}
+    \item \textbf{Objective 1 (Hybrid CSLR architecture):} A hybrid ResNet-transformer model with joint CTC and cross-entropy supervision was designed and implemented, and it remained stable compared with pure CTC-oriented baselines.
+    \item \textbf{Objective 2 (Evaluation under constrained resources):} Under constrained GPU settings, the model achieved a best test WER of 50.91\% on RWTH-PHOENIX-Weather 2014 with reproducible training controls.
+    \item \textbf{Objective 3 (Bidirectional assistive prototype):} A bidirectional pipeline integrating sign-to-text recognition and text-to-sign retrieval was implemented as a functional desktop prototype.
+    \item \textbf{Objective 4 (Usability demonstration):} The multithreaded desktop interface demonstrated practical usability for interactive assistive communication scenarios.
+\end{enumerate}
+
+Overall, each objective defined in Chapter 1 was addressed with implementable system artifacts and measurable outcomes.
+
+\section{Future Scope}
+
+Although the current system is effective as a baseline, several extensions can substantially improve performance:
+\begin{itemize}
+    \item \textbf{Longer temporal context}: increasing frame coverage beyond 64 frames using memory-efficient training (e.g., gradient checkpointing or mixed precision).
+    \item \textbf{Advanced alignment objectives}: incorporating Visual Alignment Constraint (VAC) style losses for stronger monotonic frame-gloss correspondence.
+    \item \textbf{Stronger visual encoders}: evaluating larger pretrained video backbones and multi-scale temporal modeling.
+    \item \textbf{Error-focused analysis}: systematic gloss-level confusion analysis and signer-wise performance decomposition for targeted improvement.
+    \item \textbf{Bidirectional expansion}: improving text-to-sign quality through phrase-level retrieval and smoother transition modeling between clips.
+\end{itemize}
+
+In summary, this work establishes a technically sound and practically deployable foundation for continuous sign language recognition and bidirectional assistive communication systems.

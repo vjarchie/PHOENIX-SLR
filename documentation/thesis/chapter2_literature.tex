@@ -1,0 +1,49 @@
+\chapter{LITERATURE REVIEW}
+
+\section{Evolution of Sign Language Recognition}
+
+Sign language recognition has evolved significantly over the past decade, shifting from isolated gesture recognition to Continuous Sign Language Recognition (CSLR). Early approaches relied predominantly on hand-crafted features and traditional Hidden Markov Models (HMMs). The introduction of deep learning marked a paradigm shift, treating CSLR as a complex spatial-temporal sequence transduction problem.
+
+Koller et al. \cite{koller2015continuous} established one of the foundational deep learning pipelines utilizing a CNN-HMM-RNN hybrid system. By applying a Convolutional Neural Network as a spatial feature extractor and pairing it with an HMM to model sequence constraints, they achieved a Word Error Rate (WER) of 26.8\% on the challenging RWTH-PHOENIX-Weather 2014 dataset. This work effectively demonstrated that framing CSLR with statistical speech recognition techniques could yield highly accurate large-vocabulary models.
+
+\section{Connectionist Temporal Classification (CTC) Approaches}
+
+As the field progressed towards fully end-to-end architectures, Connectionist Temporal Classification (CTC) \cite{graves2006connectionist} became the standard loss framework. CTC enables the training of sequence-to-sequence models without requiring fine-grained, frame-level alignments in the dataset. It operates by marginalizing the probabilities over all possible valid token alignments between the input video frames and the output glosses. 
+
+While CTC simplified the training pipeline, pure CTC models frequently suffer from the "CTC collapse" problem in low-data regimes. The model falls into a local minimum where it exclusively outputs blank tokens to minimize the loss artificially. 
+
+\section{Visual Alignment and Feature Constraints}
+
+To address the inherent weaknesses of CTC's unconstrained frame alignments, researchers began introducing auxiliary constraints. Zhu et al. (2021) \cite{zhu2021visual} proposed the \textbf{Visual Alignment Constraint (VAC)}. They identified that the feature extractor (typically a CNN backbone) in CSLR networks is often insufficiently trained due to the dominance of the sequence modeling head. To mitigate this, VAC strictly enforces prediction alignment between the spatial feature extractor and the temporal alignment module. By deploying two auxiliary losses that penalize prediction inconsistency, they significantly reduced overfitting, bringing the Test WER down to 21.2\% while allowing the network to remain end-to-end trainable.
+
+More recently, Hu et al. (2023) \cite{hu2023continuous} introduced the \textbf{Correlation Network (CorrNet)}, which set a new benchmark by recognizing that many existing CSLR methods process video frames independently. CorrNet dynamically computes correlation maps between the current frame and its adjacent neighbors, explicitly capturing the human body trajectories (specifically hand and face motion) across consecutive frames. This temporal tracking of spatial patches allowed CorrNet to achieve state-of-the-art (SOTA) performance of 17.8\% WER on PHOENIX-2014.
+
+\section{Hybrid CTC and Attention Models}
+
+Concurrently, researchers drew inspiration from neural machine translation. Watanabe et al. \cite{watanabe2017hybrid} introduced the hybrid CTC/Attention architecture for end-to-end speech recognition. This approach combines the strict monotonic alignment capabilities of CTC with the powerful autoregressive sequence modeling capabilities of attention-based decoders \cite{vaswani2017attention}.
+
+Specifically translating this to continuous sign language, Camgöz et al. (2020) \cite{camgoz2020sign} published \textbf{Sign Language Transformers (SLT)}. They identified an information bottleneck where traditional translation models depend entirely on the isolated accuracy of gloss recognition. SLT proposed a novel architecture that jointly learns sign language recognition and translation. By using a CTC loss to bind the dual tasks alongside an attention decoder, the network learns shared representations that eliminate CTC collapse. Their architecture established a new standard, achieving 24.5\% WER. 
+
+\section{Summary of State-of-the-Art}
+
+The progression of CSLR research clearly indicates a trajectory away from unconstrained CTC models towards sophisticated architectures that enforce spatial-temporal constraints. 
+
+\begin{table}[H]
+\centering
+\caption{Comparison of State-of-the-Art Methods on PHOENIX-2014}
+\label{tab:sota}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{Method} & \textbf{Architecture} & \textbf{Dev WER} & \textbf{Test WER} \\
+\midrule
+Koller et al. (2015) \cite{koller2015continuous} & CNN-HMM-RNN & 26.0\% & 26.8\% \\
+Camgöz et al. (2020) \cite{camgoz2020sign} & Transformer + CTC & 21.8\% & 24.5\% \\
+Zhu et al. (2021) \cite{zhu2021visual} & Visual Alignment Constraint & 19.3\% & 21.2\% \\
+Hu et al. (2023) \cite{hu2023continuous} & Correlation Network (CorrNet) & 17.3\% & 17.8\% \\
+\midrule
+\textbf{Ours (Current Run)} & \textbf{Hybrid CTC+Attention} & \textbf{51.44\%} & \textbf{50.91\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This project directly builds upon the foundational Hybrid CTC/Attention principles demonstrated by Camgöz et al., specifically focusing on stabilizing training within extreme batch-size and computational constraints.

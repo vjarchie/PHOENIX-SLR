@@ -1,0 +1,81 @@
+\chapter{PROPOSED HYBRID CSLR MODEL}
+
+\section{Introduction to the Hybrid Approach}
+
+This chapter presents the architecture implemented for continuous sign language recognition in this thesis. The main design objective is to improve optimization stability in low-resource CSLR by combining alignment-based and autoregressive supervision in a single end-to-end model.
+
+\section{Unified ResNet-18 Extraction Pipeline}
+
+The input is a video tensor of shape $T \times 3 \times 260 \times 210$. A ResNet-18 backbone pretrained on ImageNet is used to extract frame-level spatial representations. The final classification layer of ResNet is removed, and pooled feature vectors are projected to a shared model dimension $D=512$.
+
+To improve transfer stability and reduce overfitting risk on limited data, early backbone layers are frozen during training using parameter-level gradient control.
+
+\section{Shared Transformer Encoder Parameters}
+
+Frame embeddings are passed to a transformer encoder with $N=6$ layers and $h=8$ attention heads. Each encoder block contains multi-head self-attention and a feed-forward network with hidden size 2048, GELU activation, residual connections, and dropout regularization. Positional encoding is added before encoder processing to preserve temporal order.
+
+\section{Dual Head Implementation and Joint CTC-CE Loss Arrays}
+
+The encoder output is consumed by two task heads trained jointly:
+
+\subsection{Connectionist Temporal Inference Node}
+The CTC head applies a linear projection over encoder states to predict gloss vocabulary probabilities at each time step. The output space includes the gloss vocabulary and one blank token. This branch contributes the CTC alignment loss $L_{CTC}$.
+
+\subsection{Autoregressive Attention Decoder Output}
+A transformer decoder with 3 layers performs autoregressive gloss prediction using causal masking and cross-attention over encoder memory. This branch contributes sequence-level cross-entropy loss $L_{CE}$ with label smoothing.
+
+The total training objective is:
+\begin{equation}
+L_{total} = \lambda_{CTC} \times L_{CTC} + \lambda_{CE} \times L_{CE}
+\end{equation}
+
+Figure~\ref{fig:hybrid_pipeline} illustrates the complete hybrid CSLR pipeline with the shared encoder and dual-objective heads used in this thesis.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/hybrid_pipeline_overview.png}
+\caption{Hybrid CSLR pipeline with shared encoder and dual objective heads.}
+\label{fig:hybrid_pipeline}
+\end{figure}
+
+In this implementation, $\lambda_{CTC}=0.3$ and $\lambda_{CE}=0.7$. This weighting was selected to retain alignment supervision while prioritizing decoder-guided sequence modeling, which improves stability and reduces blank-dominant behavior compared with pure CTC optimization.
+
+\section{End-to-End Tensor Flow}
+
+Table~\ref{tab:tensor_flow} summarizes the principal tensor transitions in the forward pipeline.
+
+\begin{table}[H]
+\centering
+\caption{Main Tensor Flow Through the Hybrid Model}
+\label{tab:tensor_flow}
+\begin{tabular}{@{}p{4.0cm}p{4.8cm}p{4.8cm}@{}}
+\toprule
+\textbf{Stage} & \textbf{Input Shape} & \textbf{Output Shape} \\
+\midrule
+Video input & $(B, T, 3, 260, 210)$ & $(B, T, 3, 260, 210)$ \\
+ResNet-18 backbone & $(B, T, 3, 260, 210)$ & $(B, T, 512)$ \\
+Positional + encoder stack & $(B, T, 512)$ & $(B, T, 512)$ \\
+CTC projection head & $(B, T, 512)$ & $(T, B, V)$ \\
+Autoregressive decoder & $(B, T, 512)$ with shifted targets & $(B, L, V)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Training-Time and Inference-Time Behavior}
+
+\subsection{Training-Time Behavior}
+
+During training, the model receives full video clips and teacher-forced decoder targets. Both losses are computed in the same forward pass. This shared-encoder design improves parameter efficiency and allows gradients from alignment and sequence modeling objectives to jointly shape encoder representations.
+
+\subsection{Inference-Time Behavior}
+
+At inference, the decoder generates tokens autoregressively until an end token or maximum length is reached. In parallel, CTC outputs can still be inspected as an auxiliary signal for diagnosing alignment quality and blank-dominant trends.
+
+\section{Design Rationale Under Resource Constraints}
+
+The architecture choices in this thesis are guided by memory-aware deployment constraints:
+\begin{itemize}
+    \item ResNet-18 is selected as a practical compromise between representational strength and computational footprint.
+    \item Temporal windowing is capped to maintain feasible batch-level training on available GPU memory.
+    \item Joint objective learning is preferred over larger model scaling, since objective design yields more stable gains under constrained resources.
+\end{itemize}

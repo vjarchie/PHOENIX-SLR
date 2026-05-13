@@ -73,9 +73,11 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Paths
-CHECKPOINT_DIR = Path("checkpoints/transformer")
-LOG_FILE = Path("training_log.jsonl")
+# Paths - check for improved training log first
+CHECKPOINT_DIR = Path("checkpoints/improved")
+LOG_FILE_IMPROVED = Path("training_improved_log.jsonl")
+LOG_FILE_ORIGINAL = Path("training_log.jsonl")
+LOG_FILE = LOG_FILE_IMPROVED if LOG_FILE_IMPROVED.exists() else LOG_FILE_ORIGINAL
 TERMINAL_DIR = Path(r"c:\Users\admin\.cursor\projects\d-PHOENIX-SLR\terminals")
 
 

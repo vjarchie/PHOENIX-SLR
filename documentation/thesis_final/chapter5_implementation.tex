@@ -1,0 +1,266 @@
+\chapter{EXPERIMENTAL SETUP AND RESULTS}
+
+\section{Dataset and Experimental Setup}
+
+All experiments were conducted on the RWTH-PHOENIX-Weather 2014 dataset, which is a standard benchmark for continuous sign language recognition. The dataset contains gloss-level annotations and is widely used for evaluating sequence-to-sequence CSLR models under realistic signer and sentence variability.
+
+\begin{table}[H]
+\centering
+\caption{RWTH-PHOENIX-Weather 2014 Subset Configuration}
+\label{tab:dataset_phoenix}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Dataset Property} & \textbf{Value} \\
+\midrule
+Sign language & Deutsche Gebärdensprache (DGS) \\
+Domain & Meteorological forecasts \\
+Gloss vocabulary size & 1,236 \\
+Training sequences & 5,672 \\
+Development sequences & 540 \\
+Test sequences & 629 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The training environment imposed practical memory constraints. To maintain stable training on available GPU resources, the input clip length was limited to $T=64$ frames and the mini-batch size was set to 4. These limits were consistently used for all reported experiments.
+
+\section{Data Augmentation Strategy}
+
+To reduce overfitting on the limited training set, a video-level augmentation pipeline was implemented in the VideoAugmentation module. The same sampled parameters are applied consistently across frames in a clip to preserve temporal coherence.
+
+The augmentation operations include:
+\begin{itemize}
+    \item Random spatial crop with scale in $[0.85, 1.0]$,
+    \item Random rotation within $\pm 8^\circ$,
+    \item Color jitter (brightness, contrast, saturation) within $\pm 0.15$,
+    \item Mild Gaussian noise,
+    \item Temporal masking with 15\% probability and 8\% mask ratio.
+\end{itemize}
+
+Horizontal flipping was intentionally excluded because mirror transforms can alter sign meaning and therefore introduce incorrect supervisory signals.
+
+\section{Temporal Sampling}
+
+A temporal sampling module was used to normalize variable-length sequences to fixed input length. During training, speed perturbation was applied in the range $(0.8\times, 1.2\times)$ to improve robustness against signer-dependent pace variation. During validation and testing, deterministic sampling was used for consistent evaluation.
+
+\section{Optimization and Training Protocol}
+
+The model was trained using AdamW with weight decay $0.05$. Differential learning rates were used: $1\times10^{-5}$ for the pretrained CNN backbone and $1\times10^{-4}$ for the remaining network parameters. A 5-epoch linear warmup followed by cosine decay was used over a maximum of 100 epochs. Gradient clipping with max norm 5.0 and early stopping with patience 15 were applied for stability.
+
+\section{Evaluation Metric and Results}
+
+Performance was measured using Word Error Rate (WER), computed through Levenshtein distance between predicted and reference gloss sequences. The best development and test results obtained by the final hybrid configuration are reported in Table~\ref{tab:perf_metrics}.
+
+\subsection{Experiment Evolution and Selection Rationale}
+
+Multiple model families were explored during the project lifecycle, including early transformer baselines, hybrid CTC-attention variants, ResNet-backed end-to-end branches, I3D-feature branches, an improved hybrid-training branch, and a VAC-augmented branch. The reasons for exploring these paths are grounded in published sequence-modeling and CSLR literature:
+\begin{itemize}
+    \item CTC-based alignment modeling as a baseline,\cite{graves2006connectionist}
+    \item Hybrid CTC-attention supervision for improved stability,\cite{watanabe2017hybrid,camgoz2020sign}
+    \item Alignment-constrained objectives (VAC) for collapse mitigation,\cite{zhu2021visual}
+    \item Strong video feature backbones such as I3D for transfer learning in temporal vision tasks.\cite{carreira2017quo}
+\end{itemize}
+
+Table~\ref{tab:approach_mapping} summarizes what each approach changed technically, why it was explored, and the observed qualitative outcome in this project.
+
+\begin{table}[H]
+\centering
+\caption{Approach-Level Motivation and Outcome Summary}
+\label{tab:approach_mapping}
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{2.3cm}X X p{2.2cm}@{}}
+\toprule
+\textbf{Approach} & \textbf{What Changed Technically} & \textbf{Why It Was Tried} & \textbf{Observed Outcome} \\
+\midrule
+Transformer baseline & CTC-oriented transformer training without stronger hybrid stabilization & Establish a reference for alignment-first training and diagnose blank-collapse risk & Unstable convergence; high WER \\
+
+Hybrid (CTC + Attention) & Joint objective with shared encoder and decoder supervision ($\lambda_{CTC}, \lambda_{CE}$) & Improve optimization stability and sequence quality reported in prior CSLR literature & Clear stability gain; selected as core direction \\
+
+I3D feature branch & Replaced/augmented visual representation with I3D-style spatiotemporal features & Test whether stronger pre-trained video features improve low-resource CSLR robustness & Did not outperform ResNet-18 hybrid path \\
+
+Improved hybrid training & Enhanced temporal augmentation, gradient accumulation, and tuned training protocol & Reduce overfitting and improve generalization under limited GPU and data constraints & Better than early baselines; below best ResNet-18 branch \\
+
+VAC family & Added visual alignment constraint losses (SeqCTC + ConvCTC + distillation) using one VAC implementation path & Mitigate alignment drift and collapse-like behavior through auxiliary alignment supervision & Mixed results across runs; best VAC run improved substantially \\
+\bottomrule
+\end{tabularx}
+\endgroup
+\end{table}
+
+To improve experiment traceability, Table~\ref{tab:artifact_traceability} maps each approach family to the corresponding training script and recorded evidence source used in this thesis.
+
+\begin{table}[H]
+\centering
+\caption{Approach Traceability to Repository Artifacts}
+\label{tab:artifact_traceability}
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{2.4cm}p{2.7cm}X p{2.0cm}@{}}
+\toprule
+\textbf{Approach Family} & \textbf{Training Script} & \textbf{Recorded Evidence Source} & \textbf{Best Recorded WER} \\
+\midrule
+Transformer baseline & train\_text2gloss.py & Archived checkpoint summary (Appendix~\ref{tab:checkpoint_summary}) & 91.28\% \\
+Hybrid CTC+attention & train\_hybrid.py & Final model reporting in this chapter & \textbf{50.91\% (test)} \\
+End-to-end branch & train\_e2e.py & Archived checkpoint summary (Appendix~\ref{tab:checkpoint_summary}) & 95.42\% \\
+Improved branch & train\_improved.py & Archived checkpoint summary (Appendix~\ref{tab:checkpoint_summary}) & 60.40\% \\
+I3D branch & train\_i3d.py & Archived checkpoint summary (Appendix~\ref{tab:checkpoint_summary}) & 94.78\% \\
+VAC family & train\_vac.py & training\_log\_vac.jsonl and Appendix~\ref{tab:checkpoint_summary} & 61.43\% \\
+\bottomrule
+\end{tabularx}
+\endgroup
+\end{table}
+
+Checkpoint evidence showed that several early branches remained unstable or underperformed, while the ResNet-18 branch yielded the strongest stable validation trajectory in this project context (best checkpoint WER $=51.44\%$ at epoch 89 in \texttt{checkpoints/resnet18/best.pth}). In the appendix, VAC results were grouped as a single approach family because the implementation path was the same and differences across runs were attributable to training progression rather than distinct architecture definitions. A consolidated checkpoint-based summary was provided in Appendix~\ref{tab:checkpoint_summary}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.93\textwidth]{figures/experiment_wer_trend.png}
+\caption{Checkpoint-based experiment evolution in terms of best recorded WER.}
+\label{fig:wer_evolution}
+\end{figure}
+
+\subsection{Comparative Observation with Preliminary Baselines}
+
+Preliminary experiments with a pure Connectionist Temporal Classification objective showed unstable convergence and blank-dominant predictions, which is consistent with the collapse behavior reported in CSLR literature. The hybrid objective improved training stability and produced substantially better sequence predictions. A summary of this comparison is provided in Table~\ref{tab:baseline_compare}.
+
+\begin{table}[H]
+\centering
+\caption{Observed Baseline Comparison During Development}
+\label{tab:baseline_compare}
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{3.1cm}X p{3.1cm}@{}}
+\toprule
+\textbf{Model Variant} & \textbf{Training Behavior} & \textbf{Outcome} \\
+\midrule
+Pure CTC baseline & Unstable, blank-dominant outputs & Not suitable for final model \\
+Hybrid CTC + attention & Stable optimization & Selected for final evaluation \\
+\bottomrule
+\end{tabularx}
+\endgroup
+\end{table}
+
+\subsection{Diagnostic Comparison Protocol}
+
+To check whether observed improvements were associated with objective design rather than incidental behavior, a diagnostic comparison protocol was used during development. The protocol compares:
+\begin{itemize}
+    \item CTC-only training,
+    \item Hybrid training with different loss-weight balances,
+    \item Hybrid training with and without augmentation components.
+\end{itemize}
+
+For each run family, the following diagnostic signals were tracked alongside WER:
+\begin{itemize}
+    \item blank-token ratio trend during training,
+    \item validation-loss stability across epochs,
+    \item qualitative sequence plausibility in decoded gloss outputs.
+\end{itemize}
+
+This protocol was useful for diagnosing collapse-like behavior early and for selecting practical operating regions for $\lambda_{CTC}$ and $\lambda_{CE}$.
+
+\subsection{VAC Log Diagnostic Trend}
+
+In addition to checkpoint summaries, one complete structured training log (training\_log\_vac.jsonl) was available and used for objective diagnostic interpretation. This log corresponds to the VAC exploratory family and is included as supporting evidence rather than as the final model source.
+
+\begin{table}[H]
+\centering
+\caption{Diagnostic Snapshot from training\_log\_vac.jsonl}
+\label{tab:vac_log_snapshot}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Epoch} & \textbf{Dev WER} & \textbf{Blank Ratio} & \textbf{Dev Loss} \\
+\midrule
+1  & 0.9592 & 0.9959 & 5.2855 \\
+20 & 0.6838 & 0.8938 & 3.4691 \\
+35 & 0.6143 & 0.8145 & 3.4617 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Within this exploratory VAC log, both dev WER and blank ratio decreased substantially across epochs, which is consistent with improved training stability in that run family. These values are reported directly from logged records and are not used to replace the final selected-model test result.
+
+\subsection{Observed Practical Trade-offs}
+
+The experiment trajectory also revealed practical trade-offs:
+\begin{itemize}
+    \item Higher-capacity or constraint-augmented objectives require careful tuning; otherwise optimization can degrade quickly in low-resource settings.
+    \item Objective balancing contributed more to stability gains than simply scaling model size in the current compute regime.
+    \item Data and temporal-context constraints remained dominant factors limiting final WER.
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{System Performance Error Metrics}
+\label{tab:perf_metrics}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Analytical Component} & \textbf{Development Validation} & \textbf{Final Test Array} \\
+\midrule
+Optimal Word Error Rate & 51.44\% & \textbf{50.91\%} \\
+Blank token ratio (training) & 12.3\% & -- \\
+Minimum training loss & 0.0006 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The achieved test WER of 50.91\% demonstrated that the proposed hybrid objective provided stable training behavior and competitive baseline performance under constrained hardware and limited-data conditions. In this thesis, 51.44\% refers to the best development-side checkpoint from the ResNet-18 branch, while 50.91\% is the final reported test result of the selected hybrid system.
+
+\section{Error Analysis Perspective}
+
+In sequence recognition, aggregate WER can mask distinct error sources. During qualitative review of decoded outputs, three dominant error types were observed:
+\begin{itemize}
+    \item \textbf{Deletion-heavy errors}: missing glosses in fast-motion or occluded segments.
+    \item \textbf{Substitution errors}: confusion between visually similar gloss motions.
+    \item \textbf{Insertion errors}: occasional over-generation in transitional frames.
+\end{itemize}
+
+This pattern is consistent with continuous visual sequence ambiguity and motivates future work on stronger alignment constraints and longer temporal context modeling.
+
+\subsection{Representative Decoding Error Cases}
+
+To make the error profile operationally useful, Table~\ref{tab:error_cases} summarizes schematic sequence-level failure patterns used to categorize qualitative observations.
+
+\begin{table}[H]
+\centering
+\caption{Schematic Sequence Error Pattern Categories}
+\label{tab:error_cases}
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{2.6cm}p{3.1cm}p{3.1cm}X@{}}
+\toprule
+\textbf{Error Type} & \textbf{Reference Pattern} & \textbf{Predicted Pattern} & \textbf{Likely Cause} \\
+\midrule
+Deletion-dominant & \texttt{g\_1 g\_2 g\_3 g\_4} & \texttt{g\_1 g\_3 g\_4} & Intermediate transition missed under rapid motion \\
+
+Substitution-dominant & \texttt{g\_a g\_b g\_c} & \texttt{g\_a g\_d g\_c} & Visual similarity and co-articulation overlap \\
+
+Insertion-dominant & \texttt{g\_x g\_y g\_z} & \texttt{g\_x g\_k g\_y g\_z} & Decoder over-generation near ambiguous transition frames \\
+
+Boundary drift & \texttt{g\_p g\_q g\_r} & \texttt{g\_p g\_q g\_q g\_r} & Alignment uncertainty around sign boundaries \\
+
+Length truncation & \texttt{g\_m g\_n g\_o g\_u} & \texttt{g\_m g\_n g\_o} & Early sequence termination in low-confidence regions \\
+\bottomrule
+\end{tabularx}
+\endgroup
+\end{table}
+
+\noindent These schematic patterns were used as a qualitative categorization aid and were consistent with aggregate WER trends and blank-ratio diagnostics from unstable training phases. They are not presented as verbatim dataset-specific decode transcripts.
+
+\subsection{Error-Type-Oriented Improvement Mapping}
+
+The identified error classes directly mapped to technical interventions:
+\begin{itemize}
+    \item \textbf{Deletion-heavy outputs}: improve temporal context coverage and alignment regularization.
+    \item \textbf{Substitution-heavy outputs}: strengthen visual discriminability and signer-robust augmentation.
+    \item \textbf{Insertion-heavy outputs}: tune decoding termination criteria and objective balance.
+\end{itemize}
+
+This mapping provided a principled path from qualitative inspection to measurable model-improvement experiments.
+
+\section{Reproducibility Notes}
+
+To improve reproducibility, the implementation records epoch-wise metrics in structured logs and saves both best and latest checkpoints. The dataset split policy, temporal clip length, batch size, optimizer class, and objective weights are kept fixed in the reported final runs. These controls reduce accidental variance and support consistent re-evaluation.

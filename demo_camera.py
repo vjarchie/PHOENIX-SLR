@@ -31,8 +31,21 @@ class SignLanguageDemo:
         
         # Load checkpoint
         print(f"Loading model from: {checkpoint_path}")
-        checkpoint = torch.load(checkpoint_path, map_location=self.device)
-        self.vocab = checkpoint['vocab']
+        checkpoint = torch.load(checkpoint_path, map_location=self.device, weights_only=False)
+        
+        # Load vocab from checkpoint or separate file
+        if 'vocab' in checkpoint:
+            self.vocab = checkpoint['vocab']
+        else:
+            # Try to load from vocab.json in same directory
+            import json
+            vocab_path = Path(checkpoint_path).parent / 'vocab.json'
+            if vocab_path.exists():
+                with open(vocab_path, 'r', encoding='utf-8') as f:
+                    self.vocab = json.load(f)
+            else:
+                raise FileNotFoundError(f"Vocabulary not found in checkpoint or {vocab_path}")
+        
         self.idx2gloss = {v: k for k, v in self.vocab.items()}
         
         # Special tokens

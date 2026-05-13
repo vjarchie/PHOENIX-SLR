@@ -1,0 +1,67 @@
+# CorrNet+ Configuration for PHOENIX-2014
+
+# Data paths
+data:
+  root: "D:/PHOENIX-SLR/data/phoenix2014-release"
+  feature_type: "fullFrame-210x260px"
+  img_size: [112, 112]  # Reduced from 224 for memory
+  max_frames: 64        # Significantly reduced for memory
+
+# Model architecture
+model:
+  backbone: "resnet18"
+  hidden_size: 1024
+  conv_type: 2
+  weight_norm: true
+  share_classifier: true
+
+# Loss weights (CorrNet+ default)
+loss:
+  SeqCTC: 1.0
+  ConvCTC: 1.0
+  Dist: 25.0
+  Cu: 0.2
+  Cp: 0.5
+
+# Training
+training:
+  batch_size: 1
+  accumulation_steps: 16  # Effective batch size = 16
+  epochs: 80
+  
+  # Optimizer
+  optimizer: "adam"
+  learning_rate: 0.0001
+  weight_decay: 0.0001
+  
+  # Scheduler
+  scheduler: "cosine"
+  warmup_epochs: 5
+  min_lr: 0.000001
+  
+  # Gradient clipping
+  max_grad_norm: 5.0
+
+# Validation
+validation:
+  batch_size: 2
+  eval_every: 1
+
+# Hardware
+hardware:
+  device: "cuda"
+  num_workers: 0  # Set to 0 for Windows compatibility
+  pin_memory: false
+  mixed_precision: true
+
+# Checkpointing
+checkpoint:
+  save_dir: "checkpoints"
+  save_every: 5
+  keep_best: 3
+
+# Logging
+logging:
+  log_dir: "logs"
+  log_every: 50
+  wandb: false

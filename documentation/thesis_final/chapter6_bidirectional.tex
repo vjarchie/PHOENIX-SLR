@@ -1,0 +1,53 @@
+\chapter{BIDIRECTIONAL DEPLOYMENT PROTOTYPE}
+
+\section{Motivation for Bidirectional Communication}
+
+Continuous sign language recognition addresses only one communication direction (sign-to-text). In practical assistive settings, a complete interaction loop requires both directions: recognition from sign to text and response generation from text to sign representation. For this reason, a bidirectional prototype was developed in addition to the core CSLR model.
+
+\section{Text-to-Sign Retrieval Design}
+
+Instead of direct neural video synthesis, this work uses a deterministic retrieval-based approach for reverse mapping. The design choice avoids visual artifacts and semantic instability that are common in unconstrained generative methods when training data is limited.
+
+The reverse pipeline consists of three stages:
+\begin{enumerate}
+    \item \textbf{Text normalization and tokenization}: Input text is standardized and segmented into units suitable for glossary lookup.
+    \item \textbf{Gloss-level mapping}: Tokens are mapped to available gloss/video entries through dictionary and rule-based matching.
+    \item \textbf{Video concatenation}: Retrieved sign clips are merged in sequence to produce a playable response stream.
+\end{enumerate}
+
+\section{Desktop GUI and Runtime Architecture}
+
+The prototype GUI was implemented using Python and Tkinter with OpenCV-based camera integration. The interface exposes:
+\begin{itemize}
+    \item Live sign-to-text recognition from camera frames,
+    \item Text input for reverse text-to-sign rendering,
+    \item Playback controls for retrieved sign video output.
+\end{itemize}
+
+To maintain responsiveness, inference and I/O were separated using background threads. Camera capture, model inference, and UI rendering run asynchronously, preventing the interface from freezing during model execution or video concatenation.
+
+\section{Discussion}
+
+The bidirectional module is intended as a functional demonstration layer over the trained recognition model. While the reverse path is retrieval-based rather than fully generative, it is robust, deterministic, and suitable for validating interaction flow in constrained deployment settings. This integration demonstrates that the proposed CSLR system can be extended from benchmark evaluation to user-facing assistive prototypes.
+
+\section{System-Level Evaluation Considerations}
+
+The bidirectional prototype is evaluated primarily from a systems-integration perspective rather than from a standalone generative benchmark perspective. The main assessment dimensions are:
+\begin{itemize}
+    \item functional correctness of sign-to-text and text-to-sign pathways,
+    \item responsiveness of the GUI under concurrent camera capture and inference,
+    \item robustness of retrieval-based playback under variable input phrases.
+\end{itemize}
+
+These criteria are aligned with assistive usability goals, where reliable interaction flow is often more critical than purely aesthetic synthesis quality. End-to-end latency and frame-rate benchmarks were not measured as separate quantitative deployment metrics in this work.
+
+\section{Practical Limitations}
+
+The current deployment design has known limitations:
+\begin{itemize}
+    \item retrieval quality depends on available glossary coverage in indexed clips,
+    \item phrase-level smoothness can degrade at clip boundaries,
+    \item out-of-vocabulary text requires fallback handling.
+\end{itemize}
+
+Despite these constraints, the architecture provides a stable baseline for bidirectional assistive interaction and establishes a practical path for future enhancement.

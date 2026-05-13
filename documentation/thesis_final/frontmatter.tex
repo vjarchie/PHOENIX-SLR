@@ -1,0 +1,182 @@
+% Title page has no number; numbering starts from Evaluation Committee page as 1
+\pagenumbering{gobble}
+
+%-------------------------------------------------
+% 1. TITLE PAGE
+%-------------------------------------------------
+\begin{titlepage}
+\singlespacing
+% Formatting: Title must be inverted pyramid, double line spacing if longer than 4 inches, Center Justified, All Caps.
+\begin{center}
+\vspace*{1in}
+
+% Double spaced title, inverted pyramid representation
+\begin{doublespace}
+    \textbf{\Large CONTINUOUS SIGN LANGUAGE RECOGNITION}\\
+    \textbf{\Large USING HYBRID TRANSFORMER ARCHITECTURES}
+\end{doublespace}
+
+\vfill
+
+A Thesis\\
+Presented to\\
+The Academic Faculty
+
+\vfill
+
+by
+
+\vspace{1cm}
+ARCHIE NARAYAN
+
+\vspace{0.5cm}
+Roll No: 24A03RES119\\
+M.Tech (Artificial Intelligence and Data Science Engineering)
+
+\vfill
+
+In Partial Fulfillment\\
+of the Requirements for the M. Tech. Degree
+
+\vfill
+
+Indian Institute of Technology Patna\\
+APRIL 2026
+
+\vfill
+
+Copyright \copyright\ Archie Narayan 2026\\
+All Rights Reserved
+
+\end{center}
+\end{titlepage}
+
+\clearpage
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+%-------------------------------------------------
+% 2. EVALUATION COMMITTEE APPROVAL (Pg 21 templates)
+%-------------------------------------------------
+\begin{center}
+\textbf{INDIAN INSTITUTE OF TECHNOLOGY PATNA}\\
+\textbf{Evaluation Committee Approval}
+
+\vspace{1cm}
+of a Thesis submitted by
+
+\vspace{0.5cm}
+ARCHIE NARAYAN
+\end{center}
+
+\vspace{1cm}
+\noindent The thesis of Archie Narayan has been read, found satisfactory and approved by the following DPPC committee members.
+
+\vspace{1.5cm}
+\noindent Name : \rule{6cm}{0.4pt}, Supervisor \hfill Date : \rule{3cm}{0.4pt}
+
+\vspace{1cm}
+\noindent Name : \rule{6cm}{0.4pt}, Co-Supervisor \hfill Date : \rule{3cm}{0.4pt}
+
+\vspace{1cm}
+\noindent Name : \rule{6cm}{0.4pt}, Member \hfill Date : \rule{3cm}{0.4pt}
+
+\vspace{1cm}
+\noindent Name : \rule{6cm}{0.4pt}, Member \hfill Date : \rule{3cm}{0.4pt}
+
+\clearpage
+
+%-------------------------------------------------
+% 3. CERTIFICATE (Pg 24 templates)
+%-------------------------------------------------
+\begin{center}
+\textbf{Certificate}
+\end{center}
+\vspace{1cm}
+
+\noindent This is to certify that the thesis entitled ``CONTINUOUS SIGN LANGUAGE RECOGNITION USING HYBRID TRANSFORMER ARCHITECTURES'', submitted by ARCHIE NARAYAN to Indian Institute of Technology Patna, is a record of bonafide research work under my supervision and I consider it worthy of consideration for the degree of Master of Technology of this Institute. This work or a part has not been submitted to any university/institution for the award of degree/diploma. The thesis is free from plagiarized material.
+
+\vspace{3cm}
+
+\noindent \rule{5cm}{0.4pt} \\
+Prajna P.N. \\
+Supervisor \hfill Date: \rule{3cm}{0.4pt}
+
+\clearpage
+
+%-------------------------------------------------
+% 4. DECLARATION (Pg 25 templates)
+%-------------------------------------------------
+\begin{center}
+\textbf{Declaration}
+\end{center}
+\vspace{1cm}
+
+\noindent I certify that
+\begin{enumerate}
+    \item[a.] The work contained in this thesis is original and has been done by myself under the general supervision of my supervisor/s.
+    \item[b.] The work has not been submitted to any other Institute for degree or diploma.
+    \item[c.] I have followed the Institute norms and guidelines and abide by the regulation as given in the Ethical Code of Conduct of the Institute.
+    \item[d.] Whenever I have used materials (data, theory and text) from other sources, I have given due credit to them by citing them in the text of the thesis and giving their details in the reference section.
+    \item[e.] The thesis document has been thoroughly checked to exclude plagiarism.
+\end{enumerate}
+
+\vspace{3cm}
+
+\noindent \rule{5cm}{0.4pt} \\
+Signature of the Student \\
+Roll No: 24A03RES119
+
+\clearpage
+
+%-------------------------------------------------
+% 5. ACKNOWLEDGEMENTS
+%-------------------------------------------------
+\begin{center}
+\textbf{ACKNOWLEDGEMENTS}
+\end{center}
+\vspace{1cm}
+
+\noindent The author expresses sincere gratitude to the supervisor, Prajna P.N., AI Advisory Engineer at IBM Software Labs, for valuable guidance, sustained encouragement, and constructive feedback throughout this research. The author also acknowledges the faculty members and staff of Indian Institute of Technology Patna for academic support and infrastructural resources that enabled this work. The author is deeply grateful to family members for their constant motivation and support.
+
+\clearpage
+
+%-------------------------------------------------
+% TABLES OF CONTENTS / FIGURES
+%-------------------------------------------------
+\begin{singlespace}
+\tableofcontents
+\clearpage
+
+\listoftables
+\clearpage
+
+\listoffigures
+\clearpage
+\end{singlespace}
+
+%-------------------------------------------------
+% LIST OF SYMBOLS AND ABBREVIATIONS
+%-------------------------------------------------
+\begin{singlespace}
+\input{glossary}
+\end{singlespace}
+\clearpage
+
+%-------------------------------------------------
+% ABSTRACT (Pg 31 template)
+%-------------------------------------------------
+\begin{center}
+\textbf{ABSTRACT}
+\end{center}
+\vspace{1cm}
+
+\begin{singlespace}
+Continuous Sign Language Recognition (CSLR) is a challenging sequence learning problem because gloss boundaries are not explicitly available at frame level and visual patterns vary substantially across signers. This thesis presents a hybrid Connectionist Temporal Classification and attention transformer architecture for CSLR on the RWTH-PHOENIX-Weather 2014 dataset. The model uses a ResNet-18 based visual encoder and a transformer sequence module with two training objectives: Connectionist Temporal Classification for alignment learning and autoregressive cross-entropy for sequence modeling. In observed project runs, the hybrid objective showed more stable optimization behavior than pure Connectionist Temporal Classification baselines that exhibited blank-dominant trends. The implemented system achieves a best test Word Error Rate (WER) of 50.91\% with practical training constraints on limited GPU memory. In addition, a bidirectional prototype is developed by integrating sign-to-text recognition and text-to-sign video retrieval in a desktop interface, demonstrating the feasibility of an assistive communication workflow.
+
+\vspace{2cm}
+\noindent \textbf{Name}: Archie Narayan \\
+\textbf{Supervisor}: Prajna P.N.
+\end{singlespace}
+
+\clearpage

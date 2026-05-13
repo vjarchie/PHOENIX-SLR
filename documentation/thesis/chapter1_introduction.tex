@@ -1,0 +1,38 @@
+\chapter{INTRODUCTION}
+
+\section{Background and Motivation}
+
+According to the World Health Organization, approximately 466 million people worldwide experience disabling hearing loss. For deaf communities spanning the globe, sign language serves as the primary, and often exclusively natural, mode of communication. Sign language is not merely a visual encoding of spoken words; it is a fully autonomous linguistic system characterized by its own complex grammar, fluid syntax, and rich spatial-temporal dependencies.
+
+Despite the critical importance of sign language, a severe shortage of qualified sign language interpreters creates widespread, systemic barriers. Deaf individuals frequently encounter overwhelming obstacles in educational institutions, healthcare facilities, governmental interactions, and routine social environments. This communication gap isolates the deaf community from the hearing population, necessitating technological interventions to build accessible conversational bridges.
+
+Advances in deep learning and computer vision have opened new possibilities for automated sign language interpretation. Early research largely focused on isolated sign recognition, successfully categorizing distinct, pre-segmented gestures in controlled environments. However, real-world communication does not occur in isolated segments. Continuous Sign Language Recognition (CSLR) deals with connected signs flowing in natural sentences, presenting drastically more complex spatial-temporal modeling requirements. 
+
+\section{Technical Challenges}
+
+The transition from isolated gesture recognition to continuous unsegmented sequence translation presents distinct computer vision and machine learning challenges:
+\begin{itemize}
+    \item \textbf{Sequence Segmentation}: Variable-length video sequences lack explicit word boundaries, demanding models that can implicitly learn temporal alignments between hundreds of video frames and corresponding gloss vocabularies.
+    \item \textbf{Co-articulation Effects}: The physical trajectory of a sign is heavily influenced by the preceding and succeeding signs. This co-articulation alters the visual appearance of identical vocabulary words depending entirely on their contextual sentence placement.
+    \item \textbf{High Intra-Class Variance}: Signers exhibit extreme variations in signing speed, spatial style, facial expressions, and physical body proportions.
+    \item \textbf{Motion Blur and Occlusion}: Rapid hand and finger movements frequently result in heavy motion blur, self-occlusion, or out-of-frame trajectories, obfuscating critical semantic features.
+    \item \textbf{Data Scarcity}: Unlike automatic speech recognition (ASR) which boasts tens of thousands of hours of annotated audio, continuous sign language datasets remain relatively small, making high-capacity deep learning approaches exceptionally susceptible to catastrophic overfitting.
+\end{itemize}
+
+\section{Problem Statement}
+
+The development of a practical CSLR system hinges on effectively resolving the temporal alignment bottleneck. Historically, researchers mapped visual frame extractions to text using pure Connectionist Temporal Classification (CTC) models. However, when deployed in low-data regimes typical of sign language datasets, pure CTC models suffer from a mathematical deterioration known as "CTC collapse" \cite{graves2006connectionist}. Driven by the abundance of uninformative transition frames, the model falls into a severe local minimum, learning a trivial solution where it exclusively outputs blank tokens across the entire sequence. This results in an absolute 100\% Word Error Rate (WER).
+
+Furthermore, modeling sign language sentences requires capturing deep long-range temporal dependencies. Standard recurrent neural networks gradually lose historical context over sequences spanning hundreds of video frames. Finally, establishing a unidirectional system (Sign-to-Text) only solves half the communication barrier; true accessibility demands a bidirectional framework capable of rendering text back into Signed Video.
+
+This thesis project addresses these structural limitations by engineering an innovative Hybrid CTC and Attention Transformer architecture \cite{watanabe2017hybrid, camgoz2020sign}. By bridging both alignment mechanisms concurrently during the gradient update phases, the system reliably avoids collapse while establishing powerful autoregressive generation constraints.
+
+\section{Objectives and Hypotheses}
+
+The primary objectives forming the scope of this experimental research are defined as follows:
+\begin{enumerate}
+    \item \textbf{Architectural Stability}: Develop a robust hybrid CSLR system utilizing a deep Convolutional Neural Network backbone paired with an Attention-based Transformer encoder-decoder framework. The primary objective is to categorically prevent CTC collapse during extreme unsegmented alignment tasks.
+    \item \textbf{Benchmark Performance}: Establish competitive transcription accuracy on the universally recognized RWTH-PHOENIX-Weather 2014 dataset, mitigating hardware-induced batch size limitations.
+    \item \textbf{Bidirectional Interpretation}: Implement a closed-loop interpretation system capable of recognizing continuous sign language into text, and conversely traversing semantic constraints to assemble retrieved sign video segments from real-time text input.
+    \item \textbf{Practical Deployment}: Engineer an interactive, real-time graphical user interface (GUI) unifying both the camera-based recognition neural networks and the text-to-video synthesis pipeline into a single demonstrable client.
+\end{enumerate}

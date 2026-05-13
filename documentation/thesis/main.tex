@@ -1,0 +1,77 @@
+\documentclass[12pt,a4paper,twoside,openright]{report}
+
+% ===== PACKAGES =====
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times} % For Times New Roman
+\usepackage[margin=1.5in, bindingoffset=0in, right=1in, top=1.5in, bottom=1.5in]{geometry}
+% Format notes: 1.5 inch on binding edge (left for odd, right for even if twoside), 1 inch on other side. 
+% For report, twoside makes left margin bigger on odd, right bigger on even. Geometry handles this with inner/outer.
+\geometry{inner=1.5in, outer=1in, top=1.5in, bottom=1.5in}
+
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{textcomp}
+
+% ===== COLORS =====
+\definecolor{navyblue}{HTML}{000000} % For the thesis format we will keep black, unless explicitly needed
+
+% ===== HYPERREF SETUP =====
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
+
+% ===== LINE SPACING =====
+\setstretch{1.5} % 1.5 line spacing for thesis text
+
+% ===== HEADER/FOOTER =====
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% ===== DOCUMENT BEGIN =====
+\begin{document}
+
+% For frontmatter (Roman numerals)
+\pagenumbering{roman}
+
+\include{frontmatter}
+
+% Start of Thesis Body (Arabic numerals)
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\include{chapter1_introduction}
+\include{chapter2_literature}
+\include{chapter3_methodology}
+\include{chapter4_implementation}
+\include{chapter5_bidirectional}
+\include{chapter6_conclusion}
+
+% Appendices
+% \appendix
+% \include{appendixA}
+
+% References
+\clearpage
+\addcontentsline{toc}{chapter}{References}
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+\end{document}

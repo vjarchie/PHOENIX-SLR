@@ -1,0 +1,74 @@
+\chapter{METHODOLOGY AND ARCHITECTURE}
+
+\section{Dataset Configuration}
+
+This study utilizes the \textbf{RWTH-PHOENIX-Weather 2014} dataset, universally regarded as the standard benchmark for continuous sign language recognition \cite{koller2015continuous}. Recorded from authentic broadcasts on the German public television station PHOENIX, it features multiple professional interpreters executing continuous Deutsche Gebärdensprache (DGS) phrasing. 
+
+\begin{table}[H]
+\centering
+\caption{RWTH-PHOENIX-Weather 2014 Dataset Statistics}
+\label{tab:dataset}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Property} & \textbf{Value} \\
+\midrule
+Language & German Sign Language (DGS) \\
+Domain & Weather forecasts \\
+Vocabulary & 1,236 unique contextual glosses \\
+Training samples & 5,672 sequences \\
+Development samples & 540 sequences \\
+Test samples & 629 sequences \\
+Frame dimensions & 210 $\times$ 260 pixels \\
+Frame rate & 25 Frames Per Second (FPS) \\
+Total spatial size & $\sim$53 GB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{End-to-End System Architecture}
+
+The engineered subsystem employs a \textbf{Hybrid CTC+Attention architecture} \cite{watanabe2017hybrid} configured exactly within the `HybridCTCAttentionModel` source class. This architecture unifies a deep visual extraction phase directly with a dual-headed temporal tracking array, guaranteeing end-to-end differentiable states. 
+
+\subsection{Visual CNN Backbone}
+
+To compress high-dimensional raw video $(Batch, Time, 3, 260, 210)$ into trackable temporal units, a deep Convolutional Neural Network acts as the spatial feature extractor. Given the intense risk of overfitting on the 5,000-sample dataset, a relatively lightweight \textbf{ResNet-18} backbone was rigorously selected over denser variants like ResNet-50.
+
+The ImageNet-1K pretrained ResNet layers undergo structural truncation. The final fully connected layers and base pool operators are stripped, replaced by a specialized $1 \times 1$ Adaptive Average Pooling operation (`nn.AdaptiveAvgPool2d((1, 1))`). A continuous linear projection matrix subsequently scales the intermediate network states down to an absolute coordinate dimension of exactly $D = 512$ features per isolated frame. Crucially, as explicitly coded in the extraction logic, the initial 30 low-level neural parameters remain permanently frozen to stabilize early transfer learning gradients.
+
+\subsection{Transformer Encoder Dynamics}
+
+Following CNN extraction, the sequence passes into the primary Transformer Encoder. Because recurrent structures fail to intrinsically understand sequence chronology, a fixed Sinusoidal Positional Encoding matrix injects mandatory timing offsets. 
+\begin{equation}
+PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d_{model}})
+\end{equation}
+\begin{equation}
+PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d_{model}})
+\end{equation}
+
+The Transformer Encoder runs $N=6$ identical stacked layers. Each operational layer executes Multi-Head Self-Attention using $h=8$ parallel attention heads. The intermediate Feed-Forward Network dimension mathematically expands to 2,048 before projecting back to 512, ensuring highly complex contextual mixing operations across the maximum 500-sequence limit. 
+
+\subsection{Dual Output Heads (The Hybrid Solution)}
+
+The 512-dimensional encoder emissions concurrently feed two distinct operational prediction heads:
+
+1. \textbf{The CTC Head}: A singular dense projection layer reducing the 512-dimensional encoder output strictly to the defined vocabulary dimension consisting of 1,200 elements, plus a dedicated blank token. The head relies exclusively on the CTC mathematical loss formulation to infer probabilistic alignments dynamically over the unsegmented array.
+ 
+2. \textbf{The Autoregressive Attention Decoder (`GlossDecoder`)}: A secondary 3-layer Transformer Decoder acting strictly in an autoregressive generation capacity. Utilizing standard causal masking (`torch.triu(..., diagonal=1)`), this segment observes the output of the base encoder while sequentially emitting contextual gloss predictions. The cross-entropy gradients generated here explicitly anchor the temporal encoder preventing standard CTC breakdown.
+
+\section{Mathematical Loss Formulation}
+
+To explicitly prevent catastrophic failure during unsegmented translation phases, the network relies on a rigorously defined Joint Loss algorithm. This formulation maps the combined mathematical gradients of the CTC and the secondary Attention branches simultaneously.
+
+The CTC Loss marginalizes unsegmented temporal data into a probabilistic maximum likelihood function:
+\begin{equation}
+L_{CTC} = -\ln P(Y|X) = -\ln \sum_{\pi \in \Phi(Y)} \prod_{t=1}^{T} y_{\pi_t}^t
+\end{equation}
+where $\Phi(Y)$ represents the set of all valid blank-inclusive alignment paths for the target sentence $Y$.
+
+Conversely, the Cross-Entropy loss operates strictly on the 3-layer autoregressive decoder predictions. It evaluates against right-shifted target sequences, deploying a forced Label Smoothing metric mathematically clamped to 0.1 to soften absolute distributional bounds, thereby mitigating gradient confidence errors.
+
+The final operational gradients backpropagate strictly according to the definitive joint loss equation defined in the pipeline:
+\begin{equation}
+L_{total} = \lambda_{CTC} \times L_{CTC} + \lambda_{CE} \times L_{CE}
+\end{equation}
+Extensive historical research \cite{camgoz2020sign} determined optimal stabilization variables. Our training logic uniformly assigns $\lambda_{CTC} = 0.3$ and an overriding priority scalar of $\lambda_{CE} = 0.7$ for superior temporal boundary retention.
