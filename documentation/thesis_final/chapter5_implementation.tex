@@ -45,7 +45,11 @@ A temporal sampling module was used to normalize variable-length sequences to fi
 
 \section{Optimization and Training Protocol}
 
-The model was trained using AdamW with weight decay $0.05$. Differential learning rates were used: $1\times10^{-5}$ for the pretrained CNN backbone and $1\times10^{-4}$ for the remaining network parameters. A 5-epoch linear warmup followed by cosine decay was used over a maximum of 100 epochs. Gradient clipping with max norm 5.0 and early stopping with patience 15 were applied for stability.
+The model was trained using AdamW with weight decay $0.05$.\cite{loshchilov2019adamw} Differential learning rates were used: $1\times10^{-5}$ for the pretrained CNN backbone and $1\times10^{-4}$ for the remaining network parameters. A 5-epoch linear warmup followed by cosine decay was used over a maximum of 100 epochs, following warm-restart scheduling principles.\cite{loshchilov2017sgdr} Gradient clipping with max norm 5.0 and early stopping with patience 15 were applied for stability. Decoder-side training used label smoothing, which is a standard regularization choice for sequence models.\cite{muller2019labelsmoothing}
+
+\subsection{Compute Environment Note}
+
+Experiments were executed under constrained single-GPU settings. Repository utilities and training scripts record runtime environment details (for example, GPU name, available memory, and PyTorch version) at execution time (\texttt{check\_system.py}, \texttt{train\_improved.py}). However, complete hardware and software metadata were not consistently persisted for every historical run artifact; therefore this thesis reports configuration controls and logged metrics as the primary reproducibility evidence.
 
 \section{Evaluation Metric and Results}
 
@@ -182,12 +186,50 @@ In addition to checkpoint summaries, one complete structured training log (train
 
 Within this exploratory VAC log, both dev WER and blank ratio decreased substantially across epochs, which is consistent with improved training stability in that run family. These values are reported directly from logged records and are not used to replace the final selected-model test result.
 
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/vac_dev_wer_trend.png}
+\caption{VAC exploratory run: development WER trend from training\_log\_vac.jsonl.}
+\label{fig:vac_dev_wer_trend}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/vac_blank_ratio_trend.png}
+\caption{VAC exploratory run: blank-ratio trend from training\_log\_vac.jsonl.}
+\label{fig:vac_blank_ratio_trend}
+\end{figure}
+
+\subsection{Objective-Weight Evidence from Archived Runs}
+
+Table~\ref{tab:lambda_evidence} summarizes objective-weight settings for runs where numerical evidence is retained in current repository artifacts.
+
+\begin{table}[H]
+\centering
+\caption{Available Objective-Weight Evidence from Archived Runs}
+\label{tab:lambda_evidence}
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{4.3cm}p{3.4cm}X@{}}
+\toprule
+\textbf{Objective Setting} & \textbf{Weight Pair} $(\lambda_{CTC}, \lambda_{CE})$ & \textbf{Recorded WER} \\
+\midrule
+CTC-oriented transformer baseline & $(1.0,\ 0.0)$ & 91.28\% (archived branch checkpoint summary) \\
+Selected hybrid final model & $(0.3,\ 0.7)$ & \textbf{50.91\%} (final reported test result) \\
+\bottomrule
+\end{tabularx}
+\endgroup
+\end{table}
+
+\noindent This table reports only settings with retained numerical evidence in current artifacts. Intermediate balancing settings (for example $(0.5, 0.5)$) were explored during development but do not have a complete archived metric trail suitable for quantitative thesis reporting.
+
 \subsection{Observed Practical Trade-offs}
 
 The experiment trajectory also revealed practical trade-offs:
 \begin{itemize}
     \item Higher-capacity or constraint-augmented objectives require careful tuning; otherwise optimization can degrade quickly in low-resource settings.
-    \item Objective balancing contributed more to stability gains than simply scaling model size in the current compute regime.
+    \item In observed project runs, objective balancing appeared more beneficial than increasing model capacity alone in the current compute regime.
     \item Data and temporal-context constraints remained dominant factors limiting final WER.
 \end{itemize}
 
@@ -197,7 +239,7 @@ The experiment trajectory also revealed practical trade-offs:
 \label{tab:perf_metrics}
 \begin{tabular}{@{}lcc@{}}
 \toprule
-\textbf{Analytical Component} & \textbf{Development Validation} & \textbf{Final Test Array} \\
+\textbf{Analytical Component} & \textbf{Development Validation} & \textbf{Final Test Result} \\
 \midrule
 Optimal Word Error Rate & 51.44\% & \textbf{50.91\%} \\
 Blank token ratio (training) & 12.3\% & -- \\
@@ -206,7 +248,7 @@ Minimum training loss & 0.0006 & -- \\
 \end{tabular}
 \end{table}
 
-The achieved test WER of 50.91\% demonstrated that the proposed hybrid objective provided stable training behavior and competitive baseline performance under constrained hardware and limited-data conditions. In this thesis, 51.44\% refers to the best development-side checkpoint from the ResNet-18 branch, while 50.91\% is the final reported test result of the selected hybrid system.
+The achieved test WER of 50.91\% demonstrated that the proposed hybrid objective provided stable training behavior and a practically workable baseline under constrained hardware and limited-data conditions. In this thesis, 51.44\% refers to the best development-side checkpoint from the ResNet-18 branch, while 50.91\% is the final reported test result of the selected hybrid system.
 
 \section{Error Analysis Perspective}
 
@@ -218,6 +260,31 @@ In sequence recognition, aggregate WER can mask distinct error sources. During q
 \end{itemize}
 
 This pattern is consistent with continuous visual sequence ambiguity and motivates future work on stronger alignment constraints and longer temporal context modeling.
+
+\subsection{Observed Decode Example from Archived Checkpoints}
+
+Table~\ref{tab:real_decode_example} reports one real decode case extracted from archived checkpoint inference outputs using repository evaluation scripts (\texttt{scripts/extract\_decode\_examples.py}) on the test split.
+
+\begin{table}[H]
+\centering
+\caption{Example Decode Comparison (Archived Checkpoint Inference)}
+\label{tab:real_decode_example}
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}p{3.4cm}X@{}}
+\toprule
+\textbf{Type} & \textbf{Sequence} \\
+\midrule
+Ground truth & ABER FREUEN MORGEN SONNE SELTEN REGEN \\
+CTC-oriented baseline output & (empty output) \\
+Hybrid output & AUCH DANACH MEHR SONNE SONNE REGEN REGEN \\
+\bottomrule
+\end{tabularx}
+\endgroup
+\end{table}
+
+\noindent In this sampled case, the hybrid output remains imperfect but recovers content tokens, while the baseline output collapses to an empty sequence. This observation is consistent with the broader collapse-mitigation narrative from log diagnostics.
 
 \subsection{Representative Decoding Error Cases}
 

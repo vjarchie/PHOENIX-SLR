@@ -1,0 +1,62 @@
+\begin{thebibliography}{1}
+
+\bibitem{graves2006connectionist}
+Alex Graves, Santiago Fern{\'a}ndez, Faustino Gomez, and J{\"u}rgen
+  Schmidhuber.
+\newblock Connectionist temporal classification: labelling unsegmented sequence
+  data with recurrent neural networks.
+\newblock In {\em Proceedings of the 23rd International Conference on Machine
+  Learning}, pages 369--376, 2006.
+
+\bibitem{watanabe2017hybrid}
+Shinji Watanabe, Takaaki Hori, Suyoun Kim, John~R Hershey, and Tomoki Hayashi.
+\newblock Hybrid ctc/attention architecture for end-to-end speech recognition.
+\newblock {\em IEEE Journal of Selected Topics in Signal Processing},
+  11(8):1240--1253, 2017.
+
+\bibitem{camgoz2020sign}
+Necati~Cihan Camg{\"o}z, Simon Hadfield, Oscar Koller, Hermann Ney, and Richard
+  Bowden.
+\newblock Sign language transformers: Joint end-to-end sign language
+  recognition and translation.
+\newblock In {\em Proceedings of the IEEE/CVF Conference on Computer Vision and
+  Pattern Recognition (CVPR)}, pages 10023--10033, 2020.
+
+\bibitem{koller2015continuous}
+Oscar Koller, Jens Forster, and Hermann Ney.
+\newblock Continuous sign language recognition: Towards large vocabulary
+  statistical recognition systems handling multiple signers.
+\newblock {\em Computer Vision and Image Understanding}, 141:108--125, 2015.
+
+\bibitem{zhu2021visual}
+Zhuangzhu Zhu, Dongyue Li, and Limin Wang.
+\newblock Visual alignment constraint for continuous sign language recognition.
+\newblock In {\em Proceedings of the IEEE/CVF International Conference on
+  Computer Vision (ICCV)}, pages 11542--11551, 2021.
+
+\bibitem{hu2023continuous}
+Lianyu Hu, Liqing Gao, Zekang Liu, and Wei Feng.
+\newblock Continuous sign language recognition with correlation network.
+\newblock In {\em Proceedings of the IEEE/CVF Conference on Computer Vision and
+  Pattern Recognition (CVPR)}, pages 1--10, 2023.
+
+\bibitem{vaswani2017attention}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N Gomez, {\L}ukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock In {\em Advances in Neural Information Processing Systems},
+  volume~30, 2017.
+
+\bibitem{he2016deep}
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun.
+\newblock Deep residual learning for image recognition.
+\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and
+  Pattern Recognition (CVPR)}, pages 770--778, 2016.
+
+\bibitem{kingma2014adam}
+Diederik~P Kingma and Jimmy Ba.
+\newblock Adam: A method for stochastic optimization.
+\newblock In {\em International Conference on Learning Representations (ICLR)},
+  2015.
+
+\end{thebibliography}

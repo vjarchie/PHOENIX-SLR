@@ -90,3 +90,16 @@ The following project artifacts support reproducibility of the experiment-evolut
     \item Training logs including \texttt{training\_log\_vac.jsonl}.
     \item Configuration files (where available) under model-specific checkpoint folders.
 \end{itemize}
+
+\section{Repository Organization and Reproducibility Assets}
+
+To make re-execution pathways explicit, the repository structure used in this thesis can be interpreted as follows:
+\begin{itemize}
+    \item \textbf{Primary training entry points:} \texttt{train\_hybrid.py}, \texttt{train\_improved.py}, \texttt{train\_vac.py}, \texttt{train\_e2e.py}, and \texttt{train\_i3d.py}.
+    \item \textbf{Evaluation and testing scripts:} \texttt{evaluate.py}, \texttt{test\_model.py}, and diagnostic checks such as \texttt{check\_system.py}.
+    \item \textbf{Core model and loss modules:} \texttt{src/models/} and \texttt{src/losses/}, including hybrid objective and VAC-related components.
+    \item \textbf{Data pipeline components:} \texttt{src/data/} and preparation/extraction scripts under \texttt{scripts/}.
+    \item \textbf{Documentation trail:} technical notes and architecture/training evolution summaries in repository markdown files and thesis chapters.
+\end{itemize}
+
+\noindent \textbf{Operational reproducibility note:} run-to-run comparability in this work is based on fixed split usage, explicit training scripts, recorded metrics in JSONL logs, and archived checkpoint-family outcomes. Where a specific artifact is unavailable for a historical branch, the thesis labels that limitation directly instead of inferring missing values.

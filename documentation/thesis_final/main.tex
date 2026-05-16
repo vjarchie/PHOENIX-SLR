@@ -1,11 +1,11 @@
-\documentclass[12pt,a4paper,twoside]{report}
+\documentclass[12pt,a4paper,oneside]{report}
 
-% 3.9. Margins: 1.5 inches at binding edge, 1 inch at outer edge.
+% Margins: 3.75 cm left, 2.5 cm right.
 \usepackage[
   top=1.5in,
   bottom=1.5in,
-  inner=1.5in,
-  outer=1in
+  left=3.75cm,
+  right=2.5cm
 ]{geometry}
 
 % 3.8. Font: Times New Roman 12 point
@@ -19,7 +19,9 @@
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{caption}
+\usepackage{tocloft}
 \usepackage{acronym}
+\usepackage{indentfirst}
 
 % 1.4.1 References: Use number reference citation system where numbers in the text are in superscript only.
 \usepackage[super]{cite}
@@ -37,14 +39,44 @@
 \titlespacing*{\chapter}{0pt}{-20pt}{3\baselineskip} % Triple space after
 
 \titleformat{\section}
-  {\normalfont\normalsize\bfseries\centering}
+  {\normalfont\normalsize\bfseries}
   {\thesection}
   {1em}
-  {\MakeUppercase}
-\titlespacing*{\section}{0pt}{2\baselineskip}{3\baselineskip}
+  {}
+\titlespacing*{\section}{0pt}{1.5\baselineskip}{\baselineskip}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}
+  {\thesubsection}
+  {1em}
+  {}
+\titlespacing*{\subsection}{0pt}{\baselineskip}{\baselineskip}
 
 % 1.6. Page Numbering: Centered at the bottom of each page
 \pagestyle{plain}
+
+% Paragraphs begin with a four-space-equivalent indentation.
+\setlength{\parindent}{1em}
+\setlength{\parskip}{0pt}
+
+% Caption/list readability: use 10pt-equivalent sizing for LoF/LoT/TOC and captions.
+\captionsetup{font=small,labelfont=bf}
+\renewcommand{\cfttoctitlefont}{\hfill\normalfont\large\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\renewcommand{\cftlottitlefont}{\hfill\normalfont\large\bfseries}
+\renewcommand{\cftafterlottitle}{\hfill}
+\renewcommand{\cftloftitlefont}{\hfill\normalfont\large\bfseries}
+\renewcommand{\cftafterloftitle}{\hfill}
+\renewcommand{\cftchapfont}{\small}
+\renewcommand{\cftsecfont}{\small}
+\renewcommand{\cftsubsecfont}{\small}
+\renewcommand{\cftchappagefont}{\small}
+\renewcommand{\cftsecpagefont}{\small}
+\renewcommand{\cftsubsecpagefont}{\small}
+\cftsetindents{chapter}{0em}{3.0em}
+\cftsetindents{section}{3.0em}{3.2em}
+\cftsetindents{subsection}{6.2em}{3.8em}
+\setlength{\cftbeforechapskip}{0.2em}
 
 % 3.11. Equations: centered within thesis margins, set off by a triple space.
 \setlength{\abovedisplayskip}{3\baselineskip}
@@ -81,5 +113,8 @@
 \singlespacing
 \bibliographystyle{unsrt}
 \bibliography{references}
+
+% Evaluation committee page (kept as final page per institute submission preference)
+\include{evaluation_committee}
 
 \end{document}

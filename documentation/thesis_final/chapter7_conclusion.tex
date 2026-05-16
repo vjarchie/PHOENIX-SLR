@@ -4,7 +4,7 @@
 
 This thesis presented a hybrid CTC-attention framework for continuous sign language recognition on the RWTH-PHOENIX-Weather 2014 benchmark. The work addressed a key practical challenge of low-resource CSLR training: instability of purely alignment-driven objectives under long and variable input sequences.
 
-By combining CTC alignment supervision with autoregressive cross-entropy decoding, the proposed model achieved stable optimization behavior and reduced collapse tendencies. Under constrained hardware settings, the final system attained a best test Word Error Rate of 50.91\%, demonstrating the viability of the approach as a strong baseline for further improvements.
+By combining CTC alignment supervision with autoregressive cross-entropy decoding, the proposed model showed stable optimization behavior in observed project runs and reduced collapse tendencies. Under constrained hardware settings, the final system attained a best test Word Error Rate of 50.91\%, demonstrating the viability of the approach as a strong baseline for further improvements.
 
 \section{Scope and Validity Notes}
 
@@ -36,7 +36,7 @@ The objective-wise outcomes, aligned with Chapter 1, are summarized below:
     \item \textbf{Objective 1 (Hybrid CSLR architecture):} A hybrid ResNet-transformer model with joint CTC and cross-entropy supervision was designed and implemented, and it remained stable compared with pure CTC-oriented baselines.
     \item \textbf{Objective 2 (Evaluation under constrained resources):} Under constrained GPU settings, the model achieved a best test WER of 50.91\% on RWTH-PHOENIX-Weather 2014 with reproducible training controls.
     \item \textbf{Objective 3 (Bidirectional assistive prototype):} A bidirectional pipeline integrating sign-to-text recognition and text-to-sign retrieval was implemented as a functional desktop prototype.
-    \item \textbf{Objective 4 (Usability demonstration):} The multithreaded desktop interface demonstrated practical usability for interactive assistive communication scenarios.
+    \item \textbf{Objective 4 (Usability demonstration):} The multithreaded desktop interface demonstrated functional integration feasibility for interactive assistive communication scenarios.
 \end{enumerate}
 
 Overall, each objective defined in Chapter 1 was addressed with implementable system artifacts and measurable outcomes.

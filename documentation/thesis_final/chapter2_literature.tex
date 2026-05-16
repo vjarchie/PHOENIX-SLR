@@ -4,6 +4,8 @@
 
 Automatic sign language recognition has evolved from sensor-based systems to modern vision-based deep learning pipelines. Early glove-based approaches offered controlled measurements but were intrusive and unsuitable for scalable deployment. Later vision-based methods using handcrafted features and classical classifiers reduced instrumentation requirements, but performance remained limited in unconstrained settings with variable lighting, backgrounds, and signer style.
 
+In benchmark development, RWTH-PHOENIX-Weather established a large-vocabulary CSLR corpus for German Sign Language and became a standard evaluation setting for sequence models.\cite{forster2012rwth} More recent datasets such as How2Sign expanded multimodal and multiview coverage for continuous sign-language research,\cite{duarte2021how2sign} while OpenASL extended open-domain sign-language translation settings from online video sources.\cite{shi2022openasl}
+
 \section{The Deep Learning Revolution}
 
 The introduction of deep convolutional neural networks (CNNs) reduced dependence on handcrafted descriptors by learning hierarchical spatial features directly from image data. A major step toward large-vocabulary CSLR was the CNN-HMM framework of Koller et al.,\cite{koller2015continuous} which adapted sequence modeling concepts from automatic speech recognition. Although influential, HMM-based systems require carefully engineered state-transition assumptions and constrained alignment structure.
@@ -14,7 +16,9 @@ Connectionist Temporal Classification (CTC) \cite{graves2006connectionist} addre
 
 \section{Attention Mechanisms and Transformers}
 
-Transformer-based CSLR models improved long-range temporal modeling through self-attention. Camgöz et al.\cite{camgoz2020sign} demonstrated that joint recognition and translation pipelines can benefit from transformer encoders and decoders. Zhu et al.\cite{zhu2021visual} introduced visual alignment constraints to stabilize frame-to-token learning, while subsequent work including Hu et al.\cite{hu2023continuous} further improved robustness by integrating stronger temporal correlation and hybrid supervision strategies. Relative to earlier pipelines, these approaches can model richer sequence dependencies, but they typically increase memory demand and training sensitivity.
+Transformer-based CSLR models improved long-range temporal modeling through self-attention. Early neural translation-oriented sign modeling work helped establish end-to-end sign-to-text learning settings.\cite{camgoz2018neural} Camgöz et al.\cite{camgoz2020sign} then demonstrated that joint recognition and translation pipelines can benefit from transformer encoders and decoders. In parallel, transformer-based sign recognition formulations were explored for direct recognition tasks,\cite{decoster2020transformer} while Zhu et al.\cite{zhu2021visual} introduced visual alignment constraints to stabilize frame-to-token learning. Subsequent work including Hu et al.\cite{hu2023continuous} further improved robustness by integrating stronger temporal correlation and hybrid supervision strategies. Relative to earlier pipelines, these approaches can model richer sequence dependencies, but they typically increase memory demand and training sensitivity.
+
+From a broader vision perspective, transformer-based modeling progressed from image-transformer formulations\cite{dosovitskiy2021vit} to dedicated video-transformer architectures such as TimeSformer,\cite{bertasius2021timesformer} with self-supervised video pretraining approaches like VideoMAE further improving data efficiency.\cite{tong2022videomae}
 
 These developments motivate the approach adopted in this thesis: a hybrid architecture that retains CTC-based alignment learning while adding autoregressive decoding supervision to improve optimization stability and sequence quality.
 
@@ -49,7 +53,7 @@ Hybrid / constrained objectives & Watanabe et al.,\cite{watanabe2017hybrid} Zhu 
 
 \section{Research Gap and Motivation for the Present Work}
 
-Despite substantial progress, two practical gaps remain for M.Tech-level deployable systems. First, many high-performing methods assume larger compute budgets and broader hyperparameter sweeps than are feasible in constrained academic environments. Second, literature often emphasizes benchmark recognition accuracy but does not consistently extend the system into a usable bidirectional assistive workflow.
+Despite substantial progress, two practical gaps remain for deployment-oriented systems under constrained resources. First, many high-performing methods assume larger compute budgets and broader hyperparameter sweeps than are feasible in constrained academic environments. Second, literature often emphasizes benchmark recognition accuracy but does not consistently extend the system into a usable bidirectional assistive workflow.
 
 From a comparative viewpoint, prior hybrid architectures cited here focused primarily on improving recognition metrics, while bidirectional deployment support is less emphasized in these references. In many published pipelines, sign-to-gloss decoding is the primary target and reverse communication support is treated as a separate systems problem. This creates a practical gap between algorithmic performance and end-user assistive utility.
 

@@ -1,0 +1,333 @@
+{
+  "split": "test",
+  "samples": [
+    {
+      "index": 0,
+      "target": "ABER FREUEN MORGEN SONNE SELTEN REGEN",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "AUCH DANACH MEHR SONNE SONNE REGEN REGEN",
+      "ctc_edit_distance": 6,
+      "hybrid_edit_distance": 5
+    },
+    {
+      "index": 1,
+      "target": "SAMSTAG WECHSELHAFT BESONDERS FREUNDLICH NORDOST BISSCHEN BEREICH",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "SAMSTAG FREUNDLICH loc-NORD",
+      "ctc_edit_distance": 7,
+      "hybrid_edit_distance": 5
+    },
+    {
+      "index": 2,
+      "target": "SONNTAG REGEN TEIL GEWITTER SUEDOST DURCH REGEN",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "SONNTAG REGEN REGEN TEIL GEWITTER loc-SUEDOST REGEN",
+      "ctc_edit_distance": 7,
+      "hybrid_edit_distance": 3
+    },
+    {
+      "index": 3,
+      "target": "__ON__ JETZT WETTER WIE-AUSSEHEN MORGEN SAMSTAG ZWEITE APRIL __OFF__ __ON__ ZEIGEN-BILDSCHIRM __OFF__",
+      "ctc_baseline_pred": "__ON__ JETZT __OFF__",
+      "hybrid_pred": "__ON__ WETTER WIE-AUSSEHEN AUSSEHEN MORGEN SAMSTAG __OFF__ __OFF__ __OFF__",
+      "ctc_edit_distance": 9,
+      "hybrid_edit_distance": 6
+    },
+    {
+      "index": 4,
+      "target": "__ON__ FLUSS NORDOST HEUTE ABEND NOCH WOLKE KOENNEN REGEN SUEDOST",
+      "ctc_baseline_pred": "__ON__",
+      "hybrid_pred": "__ON__ NORDRAUM HEUTE NACHT KOENNEN SCHNEE REGEN REGEN REGEN REGION",
+      "ctc_edit_distance": 9,
+      "hybrid_edit_distance": 8
+    },
+    {
+      "index": 5,
+      "target": "__ON__ MONTAG UEBERALL WECHSELHAFT ABER KUEHL AB DIENSTAG IN-KOMMEND LANGSAM WIEDER ZURUECK FREUNDLICH WARM __OFF__",
+      "ctc_baseline_pred": "__ON__ __OFF__",
+      "hybrid_pred": "__ON__ MONTAG REGION WECHSELHAFT WECHSELHAFT KUEHL TEMPERATUR AB DIENSTAG IN-KOMMEND IX FREUNDLICH __OFF__",
+      "ctc_edit_distance": 13,
+      "hybrid_edit_distance": 7
+    },
+    {
+      "index": 6,
+      "target": "DAZWISCHEN REGION MILD NEUN BIS VIERZEHN GRAD TAG AUCH REGEN",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "WAHRSCHEINLICH REGION MILD NEUN BIS SIEBZEHN GRAD TAG AUCH REGEN SCHNEIEN REGEN REGEN",
+      "ctc_edit_distance": 10,
+      "hybrid_edit_distance": 5
+    },
+    {
+      "index": 7,
+      "target": "WIND MAESSIG FRISCH STARK STURM BERG SCHWER STURM SUEDOST SCHWACH WIND",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "WIND MAESSIG FRISCH SCHWER STURM MEER STURM SUED SCHWACH SCHWACH WEHEN",
+      "ctc_edit_distance": 11,
+      "hybrid_edit_distance": 6
+    },
+    {
+      "index": 8,
+      "target": "DONNERSTAG KOMMEN REGEN KOENNEN GLATT",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "DONNERSTAG cl-KOMMEN cl-KOMMEN REGEN REGEN KOENNEN GLATT",
+      "ctc_edit_distance": 5,
+      "hybrid_edit_distance": 3
+    },
+    {
+      "index": 9,
+      "target": "SUED FREUNDLICH TROCKEN __OFF__",
+      "ctc_baseline_pred": "__OFF__",
+      "hybrid_pred": "SUEDRAUM SUED FREUNDLICH TROCKEN __OFF__",
+      "ctc_edit_distance": 3,
+      "hybrid_edit_distance": 1
+    },
+    {
+      "index": 10,
+      "target": "__ON__ SONNTAG SPEZIELL SUEDOST GEWITTER NORD MEHR SONNE",
+      "ctc_baseline_pred": "__ON__",
+      "hybrid_pred": "__ON__ SONNTAG loc-SUEDOST WENIG GEWITTER loc-NORDWEST SONNE",
+      "ctc_edit_distance": 7,
+      "hybrid_edit_distance": 4
+    },
+    {
+      "index": 11,
+      "target": "__ON__ LIEB ZUSCHAUER BEGRUESSEN GUT ABEND __OFF__",
+      "ctc_baseline_pred": "__ON__ __OFF__",
+      "hybrid_pred": "__ON__ LIEB ZUSCHAUER ZUSCHAUER GUT ABEND __OFF__",
+      "ctc_edit_distance": 5,
+      "hybrid_edit_distance": 1
+    },
+    {
+      "index": 12,
+      "target": "__ON__ NORDWEST FREUNDLICH __OFF__ __ON__ WIND ZEIGEN-BILDSCHIRM __OFF__ __ON__ WIND WEHEN WIND KOENNEN __OFF__",
+      "ctc_baseline_pred": "__ON__ __OFF__",
+      "hybrid_pred": "__ON__ loc-NORDWEST FREUNDLICH __OFF__ __ON__ WIND ZEIGEN ZEIGEN WEHEN-PLUSPLUS WIND KOENNEN __OFF__ __OFF__",
+      "ctc_edit_distance": 12,
+      "hybrid_edit_distance": 7
+    },
+    {
+      "index": 13,
+      "target": "__ON__ OST REGION HOCH STURM KOENNEN MANNHEIM BISSCHEN REGION ZWEI SIEBEN GRENZE __OFF__",
+      "ctc_baseline_pred": "__ON__ __OFF__",
+      "hybrid_pred": "__ON__ OST loc-ALPEN STURM KOENNEN MORGEN loc-REGION ZWEI SIEBEN ALPEN __OFF__",
+      "ctc_edit_distance": 11,
+      "hybrid_edit_distance": 6
+    },
+    {
+      "index": 14,
+      "target": "MORGEN DASSELBE SCHAUER REGION SONST VIEL SONNE REGION TEILWEISE WEHEN STARK",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "MORGEN WIE-IMMER REGEN BERG REGION VIEL SONNE REGION DARUM STROEMEN STROEMEN STARK",
+      "ctc_edit_distance": 11,
+      "hybrid_edit_distance": 7
+    },
+    {
+      "index": 15,
+      "target": "__ON__ REGION VIEL SONNE BISSCHEN WOLKE __OFF__",
+      "ctc_baseline_pred": "__ON__ __OFF__",
+      "hybrid_pred": "__ON__ REGION VIEL SONNE SONNE BISSCHEN WOLKE __OFF__",
+      "ctc_edit_distance": 5,
+      "hybrid_edit_distance": 1
+    },
+    {
+      "index": 16,
+      "target": "TAG NORDOST ZWOELF SUED BAYERN IX MAXIMAL ZWANZIG GRAD",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "TAG loc-NORDOST ZWOELF SUED MAXIMAL ZWANZIG GRAD",
+      "ctc_edit_distance": 9,
+      "hybrid_edit_distance": 3
+    },
+    {
+      "index": 17,
+      "target": "MONTAG AUCH MEHR WOLKE ALS SONNE UEBERWIEGEND REGEN UEBERWIEGEND GEWITTER",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "MONTAG AUCH MEHR WOLKE SONNE UEBERWIEGEND REGEN REGEN HEFTIG GEWITTER",
+      "ctc_edit_distance": 10,
+      "hybrid_edit_distance": 3
+    },
+    {
+      "index": 18,
+      "target": "MORGEN OST IX WEST NOCHEINMAL VIERZEHN GRAD MAXIMAL SCHLUSS",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "MORGEN OST OST WEST IX GRAD MAXIMAL",
+      "ctc_edit_distance": 9,
+      "hybrid_edit_distance": 4
+    },
+    {
+      "index": 19,
+      "target": "__ON__ MORGEN DANN HERBST MISCHUNG HOCH NEBEL WOLKE SONNE",
+      "ctc_baseline_pred": "__ON__",
+      "hybrid_pred": "__ON__ MORGEN AUCH WEHEN WOLKE SONNE",
+      "ctc_edit_distance": 8,
+      "hybrid_edit_distance": 5
+    },
+    {
+      "index": 20,
+      "target": "ABER IM-VERLAUF NEBEL HOCH NEBEL IX MORGEN LANG BLEIBEN",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "BISSCHEN IM-VERLAUF NEBEL HOCH WOLKE MORGEN WOCHE NICHTALP-AUCH __PU__",
+      "ctc_edit_distance": 9,
+      "hybrid_edit_distance": 6
+    },
+    {
+      "index": 21,
+      "target": "__ON__ SONNTAG NORD MITTE REGION REGEN NORD STURM SUED REGION BESSER __OFF__",
+      "ctc_baseline_pred": "__ON__ __OFF__",
+      "hybrid_pred": "__ON__ SONNTAG NORD DABEI REGEN NORD STURM SUED loc-REGION __OFF__",
+      "ctc_edit_distance": 10,
+      "hybrid_edit_distance": 4
+    },
+    {
+      "index": 22,
+      "target": "NACHT ZWOELF KOELN REGION EINS REGION IX AM-TAG ELF VOGEL LAND __OFF__",
+      "ctc_baseline_pred": "__OFF__",
+      "hybrid_pred": "NACHT ZWOELF REGION IX TAG ELF FLUSS __OFF__",
+      "ctc_edit_distance": 11,
+      "hybrid_edit_distance": 6
+    },
+    {
+      "index": 23,
+      "target": "FUER VIEL SONNE NICHT-REGION NICHT PAAR-TAG ANFANG WIE-IMMER WIE-IMMER IN-KOMMEND",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "VIEL SONNE WOLKE REGION WECHSELHAFT TAG ANFANG __EMOTION__ VERAENDERN ZWEI-TAG SUEDOSTRAUM SUEDOSTRAUM",
+      "ctc_edit_distance": 10,
+      "hybrid_edit_distance": 10
+    },
+    {
+      "index": 24,
+      "target": "__ON__ MITTE BERG VIER NORDWEST ZWOELF GRAD WOLKE",
+      "ctc_baseline_pred": "__ON__",
+      "hybrid_pred": "__ON__ NIEDER VIER NORDWESTRAUM REGION ZWOELF GRAD WOLKE",
+      "ctc_edit_distance": 7,
+      "hybrid_edit_distance": 4
+    },
+    {
+      "index": 25,
+      "target": "MORGEN IX NORDOST WOLKE UEBERWIEGEND SCHAUER",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "MORGEN NORDOSTRAUM MEISTENS SCHAUER SCHAUER",
+      "ctc_edit_distance": 6,
+      "hybrid_edit_distance": 4
+    },
+    {
+      "index": 26,
+      "target": "DANN REGEN OST REGION MILD FUENFZEHN SECHSZEHN",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "UND BISSCHEN REGEN DEUTSCH OST loc-REGION MILD FUENFZEHN FUENFZEHN UNTEN",
+      "ctc_edit_distance": 7,
+      "hybrid_edit_distance": 6
+    },
+    {
+      "index": 27,
+      "target": "__ON__ JETZT WETTER WIE-AUSSEHEN MORGEN DONNERSTAG DRITTE DEZEMBER __OFF__",
+      "ctc_baseline_pred": "__ON__ JETZT APRIL __OFF__",
+      "hybrid_pred": "__ON__ JETZT WETTER WIE-AUSSEHEN MORGEN DONNERSTAG DREISSIG __OFF__",
+      "ctc_edit_distance": 6,
+      "hybrid_edit_distance": 2
+    },
+    {
+      "index": 28,
+      "target": "REGION SUEDOST HAUPTSAECHLICH BEWOELKT TROCKEN SONNE WOLKE __OFF__",
+      "ctc_baseline_pred": "__OFF__",
+      "hybrid_pred": "loc-SUEDOST HAUPTSAECHLICH NEBEL TROCKEN SONNE __OFF__",
+      "ctc_edit_distance": 7,
+      "hybrid_edit_distance": 4
+    },
+    {
+      "index": 29,
+      "target": "__ON__ OST SEE TIEF DRUCK ZONE NORD NOCH SCHNEE SCHNEIEN ZWEITE MITTE MEER DANN SLOWAKEI KOMMEN",
+      "ctc_baseline_pred": "__ON__",
+      "hybrid_pred": "__ON__ OST SEE NORD DEUTSCHLAND SCHEINEN loc-GRENZE WIEDER",
+      "ctc_edit_distance": 15,
+      "hybrid_edit_distance": 12
+    },
+    {
+      "index": 30,
+      "target": "NORDWEST WIEDER FREUNDLICH WOLKE AUFLOESEN WIND SCHWACH NORD MAESSIG",
+      "ctc_baseline_pred": "__ON__",
+      "hybrid_pred": "NORDWESTRAUM FREUNDLICH TAUEN SCHWACH NORD MAESSIG",
+      "ctc_edit_distance": 9,
+      "hybrid_edit_distance": 5
+    },
+    {
+      "index": 31,
+      "target": "__OFF__ NORD OST DEUTSCHLAND MORGEN DIESE LOS KOMMEN DESWEGEN SONNE REGION",
+      "ctc_baseline_pred": "__ON__",
+      "hybrid_pred": "__ON__ loc-NORDOST DEUTSCHLAND DEUTSCHLAND MORGEN DESWEGEN DRUCK DESWEGEN SONNE SONNE loc-REGION",
+      "ctc_edit_distance": 11,
+      "hybrid_edit_distance": 8
+    },
+    {
+      "index": 32,
+      "target": "AUCH DRESDEN REGION REGEN KOENNEN __OFF__",
+      "ctc_baseline_pred": "__ON__ __OFF__",
+      "hybrid_pred": "DANN loc-REGION REGEN-PLUSPLUS REGEN-PLUSPLUS KOENNEN __OFF__",
+      "ctc_edit_distance": 5,
+      "hybrid_edit_distance": 4
+    },
+    {
+      "index": 33,
+      "target": "TAG WEST KOMMEN BISSCHEN GEWITTER __OFF__",
+      "ctc_baseline_pred": "__OFF__",
+      "hybrid_pred": "__PU__ loc-SUEDWEST WEST KOMMEN IX __OFF__",
+      "ctc_edit_distance": 5,
+      "hybrid_edit_distance": 4
+    },
+    {
+      "index": 34,
+      "target": "__ON__ JETZT MORGEN WETTER WIE-AUSSEHEN ZEIGEN-BILDSCHIRM DONNERSTAG DRITTE MAERZ __OFF__",
+      "ctc_baseline_pred": "__ON__ JETZT NOVEMBER __OFF__",
+      "hybrid_pred": "__ON__ MORGEN WETTER WIE-AUSSEHEN __PU__ DONNERSTAG DONNERSTAG MAERZ MAERZ __OFF__",
+      "ctc_edit_distance": 7,
+      "hybrid_edit_distance": 4
+    },
+    {
+      "index": 35,
+      "target": "__ON__ REST REGION SONNE __OFF__",
+      "ctc_baseline_pred": "__ON__ __OFF__",
+      "hybrid_pred": "__ON__ SONNE __OFF__",
+      "ctc_edit_distance": 3,
+      "hybrid_edit_distance": 2
+    },
+    {
+      "index": 36,
+      "target": "__ON__ MILD WEHEN ICH RUSSLAND IX STARK KOMMEN EINFLUSS",
+      "ctc_baseline_pred": "__ON__",
+      "hybrid_pred": "__ON__ MILD MILD WEHEN WEHEN ICH ENGLAND IX STARK WEHEN",
+      "ctc_edit_distance": 8,
+      "hybrid_edit_distance": 5
+    },
+    {
+      "index": 37,
+      "target": "SONST WAHRSCHEINLICH BEIDE ABER KOMMEN",
+      "ctc_baseline_pred": "",
+      "hybrid_pred": "SONST SONST WAHRSCHEINLICH DANN __LEFTHAND__ __LEFTHAND__ __LEFTHAND__ cl-KOMMEN cl-KOMMEN cl-KOMMEN",
+      "ctc_edit_distance": 5,
+      "hybrid_edit_distance": 8
+    },
+    {
+      "index": 38,
+      "target": "__ON__ DEUTSCH HIER LAND SUEDOST HOCH DRUCK FREUNDLICH",
+      "ctc_baseline_pred": "__ON__",
+      "hybrid_pred": "__ON__ DEUTSCH LAND SUEDOSTRAUM HOCH DRUCK DRUCK FREUNDLICH",
+      "ctc_edit_distance": 7,
+      "hybrid_edit_distance": 3
+    },
+    {
+      "index": 39,
+      "target": "__ON__ NEUNZEHN GRAD NORD SECHS ZWANZIG THUERINGEN SACHSEN TAG KLAR __OFF__",
+      "ctc_baseline_pred": "__ON__ JETZT __OFF__",
+      "hybrid_pred": "__ON__ NEUNZEHN TEMPERATUR loc-NORD SECHS VIERZEHN VIER __OFF__",
+      "ctc_edit_distance": 9,
+      "hybrid_edit_distance": 7
+    }
+  ],
+  "selected_example": {
+    "index": 0,
+    "target": "ABER FREUEN MORGEN SONNE SELTEN REGEN",
+    "ctc_baseline_pred": "",
+    "hybrid_pred": "AUCH DANACH MEHR SONNE SONNE REGEN REGEN",
+    "ctc_edit_distance": 6,
+    "hybrid_edit_distance": 5
+  }
+}

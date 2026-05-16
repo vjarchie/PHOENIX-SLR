@@ -41,19 +41,3 @@
 \textbf{$\mathcal{L}_{CE}$} & Cross-entropy loss term for autoregressive decoding \\
 \textbf{$\mathcal{L}_{hybrid}$} & Total hybrid training objective combining CTC and CE terms \\
 \end{tabularx}
-
-\vspace{0.75cm}
-
-\section*{Key Technical Terms}
-\begin{tabularx}{\textwidth}{@{}p{0.30\textwidth}X@{}}
-\textbf{Co-articulation} & Temporal blending between neighboring signs that makes exact boundary localization difficult. \\
-\textbf{Deletion Error} & A reference gloss omitted in prediction; typically increases when alignment confidence is weak. \\
-\textbf{Insertion Error} & An extra predicted gloss not present in the reference sequence. \\
-\textbf{Substitution Error} & A reference gloss replaced by another gloss in prediction due to visual or temporal confusion. \\
-\textbf{Alignment Drift} & Shift of predicted sign boundaries over time, causing duplicated or missed signs near transitions. \\
-\textbf{Teacher Forcing} & Training strategy where ground-truth previous tokens are provided to the decoder at each step. \\
-\textbf{Beam Search} & Heuristic decoding strategy that keeps top candidate sequences rather than only the best single path. \\
-\textbf{Generalization} & Model ability to maintain performance on unseen signer sequences and conditions. \\
-\textbf{Gloss} & A textual token representing the canonical label of a sign unit used as the target sequence in CSLR. \\
-\textbf{HamNoSys} & Hamburg Notation System, a formal sign-language notation scheme used to represent handshape, location, and movement. \\
-\end{tabularx}
