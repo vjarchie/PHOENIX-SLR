@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#f7f9fc"/>
+  <text x="640" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" fill="#1f3b73" font-weight="bold">
+    Motivation: Accessibility Gap in Communication
+  </text>
+
+  <rect x="90" y="140" width="330" height="450" rx="20" fill="#e8f0ff" stroke="#2b5fc7" stroke-width="3"/>
+  <text x="255" y="185" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#1f3b73" font-weight="bold">Sign Input</text>
+  <circle cx="255" cy="300" r="80" fill="#c7dcff"/>
+  <rect x="185" y="390" width="140" height="130" rx="18" fill="#8fb5ff"/>
+  <text x="255" y="560" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#1f3b73">Video Stream</text>
+
+  <rect x="475" y="220" width="330" height="280" rx="20" fill="#fff4e6" stroke="#f28f16" stroke-width="3"/>
+  <text x="640" y="275" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" fill="#a65a00" font-weight="bold">Communication</text>
+  <text x="640" y="315" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" fill="#a65a00" font-weight="bold">Gap</text>
+  <path d="M555 390 L725 390" stroke="#f28f16" stroke-width="8" stroke-dasharray="18 12"/>
+
+  <rect x="860" y="140" width="330" height="450" rx="20" fill="#e9f9ef" stroke="#28a745" stroke-width="3"/>
+  <text x="1025" y="185" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#1f6a3c" font-weight="bold">Text Output</text>
+  <rect x="915" y="245" width="220" height="50" rx="10" fill="#d4f4e0"/>
+  <rect x="915" y="320" width="220" height="50" rx="10" fill="#d4f4e0"/>
+  <rect x="915" y="395" width="220" height="50" rx="10" fill="#d4f4e0"/>
+  <text x="1025" y="560" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#1f6a3c">Readable Understanding</text>
+
+  <path d="M420 360 L475 360" stroke="#2b5fc7" stroke-width="8" marker-end="url(#arr)"/>
+  <path d="M805 360 L860 360" stroke="#28a745" stroke-width="8" marker-end="url(#arr)"/>
+
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#4b5563"/>
+    </marker>
+  </defs>
+</svg>

@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="920" viewBox="0 0 1600 920">
+  <rect width="1600" height="920" fill="#f8fafc"/>
+
+  <text x="800" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" fill="#0f172a" font-weight="bold">
+    Complete Bidirectional Sign Language Architecture
+  </text>
+  <text x="800" y="88" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#334155">
+    Sign->Text (Recognition) and Text->Sign (Production)
+  </text>
+
+  <!-- LEFT PANEL: Sign to Text -->
+  <rect x="60" y="130" width="720" height="730" rx="18" fill="#eef2ff" stroke="#6366f1" stroke-width="3"/>
+  <text x="420" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#3730a3" font-weight="bold">
+    A) Sign -> Text (Recognition)
+  </text>
+
+  <g font-family="Arial, sans-serif" font-size="21" fill="#1e293b" text-anchor="middle">
+    <rect x="110" y="220" width="180" height="88" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/>
+    <text x="200" y="272">Sign Video</text>
+
+    <rect x="340" y="220" width="200" height="88" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/>
+    <text x="440" y="272">Frame Buffer</text>
+
+    <rect x="590" y="220" width="150" height="88" rx="12" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2.5"/>
+    <text x="665" y="272">ResNet-18</text>
+
+    <rect x="280" y="360" width="260" height="96" rx="12" fill="#ccfbf1" stroke="#0f766e" stroke-width="2.5"/>
+    <text x="410" y="417">Transformer Encoder</text>
+
+    <rect x="110" y="520" width="220" height="96" rx="12" fill="#fde68a" stroke="#b45309" stroke-width="2.5"/>
+    <text x="220" y="576">CTC Head</text>
+
+    <rect x="490" y="520" width="220" height="96" rx="12" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="2.5"/>
+    <text x="600" y="576">Attention Decoder</text>
+
+    <rect x="280" y="680" width="260" height="96" rx="12" fill="#dcfce7" stroke="#15803d" stroke-width="2.5"/>
+    <text x="410" y="720">Gloss Output</text>
+    <text x="410" y="748">(DGS Tokens)</text>
+  </g>
+
+  <!-- RIGHT PANEL: Text to Sign -->
+  <rect x="820" y="130" width="720" height="730" rx="18" fill="#ecfeff" stroke="#0891b2" stroke-width="3"/>
+  <text x="1180" y="168" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#0e7490" font-weight="bold">
+    B) Text -> Sign (Production)
+  </text>
+
+  <g font-family="Arial, sans-serif" font-size="20" fill="#1e293b" text-anchor="middle">
+    <rect x="1090" y="220" width="300" height="88" rx="12" fill="#ffedd5" stroke="#ea580c" stroke-width="2.5"/>
+    <text x="1240" y="272">German Text Input</text>
+
+    <rect x="1090" y="360" width="300" height="96" rx="12" fill="#e9d5ff" stroke="#7c3aed" stroke-width="2.5"/>
+    <text x="1240" y="402">Neural Text->Gloss</text>
+    <text x="1240" y="430">Transformer</text>
+
+    <rect x="1090" y="500" width="300" height="96" rx="12" fill="#ddd6fe" stroke="#6d28d9" stroke-width="2.5"/>
+    <text x="1240" y="542">Gloss Sequence</text>
+    <text x="1240" y="570">(Predicted)</text>
+
+    <rect x="1090" y="640" width="300" height="120" rx="12" fill="#d1fae5" stroke="#16a34a" stroke-width="2.5"/>
+    <text x="1240" y="688">Gloss Retriever</text>
+
+    <rect x="1090" y="800" width="300" height="50" rx="10" fill="#bae6fd" stroke="#0284c7" stroke-width="2.5"/>
+    <text x="1240" y="832">Sign Video Output</text>
+  </g>
+
+  <!-- Central shared gloss bridge -->
+  <rect x="700" y="430" width="200" height="60" rx="10" fill="#f1f5f9" stroke="#64748b" stroke-width="2.5"/>
+  <text x="800" y="468" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" fill="#334155">
+    Gloss Space
+  </text>
+
+  <!-- Arrows -->
+  <g stroke="#334155" stroke-width="5" fill="none" marker-end="url(#arrow)">
+    <!-- Left chain -->
+    <path d="M290 264 L340 264"/>
+    <path d="M540 264 L590 264"/>
+    <path d="M665 308 L665 340 L470 340 L470 360"/>
+    <path d="M410 456 L410 500 L220 500 L220 520"/>
+    <path d="M410 456 L410 500 L600 500 L600 520"/>
+    <path d="M220 616 L220 660 L410 660 L410 680"/>
+    <path d="M600 616 L600 660 L410 660 L410 680"/>
+
+    <!-- Right chain -->
+    <path d="M1240 308 L1240 360"/>
+    <path d="M1240 456 L1240 500"/>
+    <path d="M1240 596 L1240 640"/>
+    <path d="M1240 760 L1240 800"/>
+
+    <!-- Gloss bridge -->
+    <path d="M540 728 L620 728 L620 460 L700 460"/>
+    <path d="M900 460 L980 460 L980 500 L1090 500"/>
+  </g>
+
+  <!-- Legend -->
+  <rect x="70" y="875" width="1460" height="32" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="800" y="897" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#334155">
+    Current prototype flow: Recognition + Neural Text->Gloss + Gloss Retrieval -> Sign Video
+  </text>
+
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto">
+      <path d="M0,0 L0,8 L10,4 z" fill="#334155"/>
+    </marker>
+  </defs>
+</svg>

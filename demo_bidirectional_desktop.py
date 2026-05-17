@@ -18,6 +18,7 @@ import json
 import sys
 import threading
 import time
+from collections import deque
 from pathlib import Path
 from typing import Any, Callable, Optional
 
@@ -90,11 +91,16 @@ class BidirectionalDemoApp:
         self._cam_stop = threading.Event()
         self._cam_thread: Optional[threading.Thread] = None
         self._latest_photo: Optional[ImageTk.PhotoImage] = None
+        self._preview_lock = threading.Lock()
+        self._latest_preview_frame: Optional[np.ndarray] = None
         self._pipeline: Any = None
         self._pipeline_err: Optional[str] = None
         self._sign_video_frames: Optional[np.ndarray] = None
         self._sign_video_idx = 0
         self._after_play_id: Optional[str] = None
+        self._decode_busy = False
+        self._stream_decode_enabled = False
+        self._stream_decode_after_id: Optional[str] = None
 
         self.demo = SignLanguageDemo(str(checkpoint), device)
 
@@ -115,11 +121,18 @@ class BidirectionalDemoApp:
         ttk.Button(cam_row, text="Decode now", command=self._decode_sign).pack(
             side=tk.LEFT, padx=4
         )
+        self.btn_stream_decode = ttk.Button(
+            cam_row, text="Start auto decode", command=self._toggle_stream_decode
+        )
+        self.btn_stream_decode.pack(side=tk.LEFT, padx=4)
         self.lbl_cam_status = ttk.Label(cam_row, text="Camera off")
         self.lbl_cam_status.pack(side=tk.LEFT, padx=12)
 
-        self.lbl_preview = ttk.Label(tab1)
-        self.lbl_preview.pack(pady=6)
+        preview_frame = ttk.Frame(tab1, width=480, height=360)
+        preview_frame.pack_propagate(False)
+        preview_frame.pack(pady=6)
+        self.lbl_preview = ttk.Label(preview_frame, anchor="center")
+        self.lbl_preview.pack(fill=tk.BOTH, expand=True)
 
         ttk.Label(tab1, text="Glosses (DGS):").pack(anchor=tk.W)
         self.txt_gloss = scrolledtext.ScrolledText(tab1, height=3, wrap=tk.WORD)
@@ -139,6 +152,34 @@ class BidirectionalDemoApp:
         self.entry_de.insert(
             0, "Morgen gibt es Regen im Norden"
         )
+        self.demo_phrases = [
+            "Morgen gibt es Regen im Norden",
+            "Heute ist es sonnig und warm",
+            "Am Abend wird es windig",
+            "Die Temperatur liegt bei zwanzig Grad",
+            "Im Süden gibt es leichte Schauer",
+            "Bitte langsam sprechen",
+            "Ich brauche Hilfe",
+            "Können Sie das wiederholen?",
+            "Wo ist der Bahnhof?",
+            "Ich habe heute keine Zeit",
+            "Wir treffen uns morgen um zehn Uhr",
+            "Vielen Dank für Ihre Hilfe",
+        ]
+        phrase_row = ttk.Frame(tab2)
+        phrase_row.pack(fill=tk.X, pady=(0, 6))
+        ttk.Label(phrase_row, text="Demo phrase:").pack(side=tk.LEFT, padx=(0, 6))
+        self.cmb_demo_phrase = ttk.Combobox(
+            phrase_row,
+            state="readonly",
+            values=self.demo_phrases,
+            width=58,
+        )
+        self.cmb_demo_phrase.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.cmb_demo_phrase.current(0)
+        ttk.Button(
+            phrase_row, text="Use phrase", command=self._apply_demo_phrase
+        ).pack(side=tk.LEFT, padx=(8, 0))
 
         row2 = ttk.Frame(tab2)
         row2.pack(fill=tk.X, pady=6)
@@ -159,6 +200,7 @@ class BidirectionalDemoApp:
         self.txt_gloss_out = scrolledtext.ScrolledText(tab2, height=4, wrap=tk.WORD)
         self.txt_gloss_out.pack(fill=tk.BOTH, expand=True)
 
+        self.root.after(100, self._refresh_camera_preview)
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
 
     def _toggle_camera(self) -> None:
@@ -167,6 +209,7 @@ class BidirectionalDemoApp:
             self._cam_thread.join(timeout=2.0)
             self._cam_thread = None
             self._cam_stop.clear()
+            self._stop_stream_decode()
             self.btn_cam.configure(text="Start camera")
             self.lbl_cam_status.configure(text="Camera off")
             return
@@ -206,12 +249,8 @@ class BidirectionalDemoApp:
                 with self._buffer_lock:
                     self.demo.frame_buffer.append(proc)
 
-                rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                rgb = cv2.resize(rgb, (480, 360))
-                im = Image.fromarray(rgb)
-                photo = ImageTk.PhotoImage(image=im)
-                self._latest_photo = photo
-                self.root.after(0, lambda p=photo: self.lbl_preview.configure(image=p))
+                with self._preview_lock:
+                    self._latest_preview_frame = frame.copy()
 
             cap.release()
 
@@ -219,6 +258,22 @@ class BidirectionalDemoApp:
         self._cam_thread.start()
         self.btn_cam.configure(text="Stop camera")
         self.lbl_cam_status.configure(text="Streaming… buffer fills automatically (max 64)")
+
+    def _refresh_camera_preview(self) -> None:
+        frame = None
+        with self._preview_lock:
+            if self._latest_preview_frame is not None:
+                frame = self._latest_preview_frame
+
+        if frame is not None:
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            rgb = cv2.resize(rgb, (480, 360))
+            im = Image.fromarray(rgb)
+            photo = ImageTk.PhotoImage(image=im)
+            self._latest_photo = photo
+            self.lbl_preview.configure(image=photo)
+
+        self.root.after(100, self._refresh_camera_preview)
 
     def _clear_buffer(self) -> None:
         with self._buffer_lock:
@@ -229,35 +284,96 @@ class BidirectionalDemoApp:
         self.txt_en.delete("1.0", self.tk.END)
 
     def _decode_sign(self) -> None:
+        self._run_decode_async(show_popups=True)
+
+    def _run_decode_async(self, show_popups: bool = False) -> None:
+        if self._decode_busy:
+            return
+        self._decode_busy = True
+
         def work() -> None:
             with self._buffer_lock:
-                n = len(self.demo.frame_buffer)
+                frames_snapshot = list(self.demo.frame_buffer)
+                n = len(frames_snapshot)
                 if n < 16:
+                    if show_popups:
+                        self.root.after(
+                            0,
+                            lambda: self.messagebox.showinfo(
+                                "Buffer", f"Need at least 16 frames in buffer (have {n})."
+                            ),
+                        )
+                    self._decode_busy = False
+                    return
+                # Use the most recent window to avoid stale/idle frames dominating decode.
+                recent_frames = frames_snapshot[-48:]
+                original_buffer = self.demo.frame_buffer
+                self.demo.frame_buffer = deque(recent_frames, maxlen=64)
+                try:
+                    result = self.demo.predict()
+                finally:
+                    self.demo.frame_buffer = original_buffer
+            if not result:
+                if show_popups:
+                    self.root.after(
+                        0,
+                        lambda: self.messagebox.showinfo("Decode", "No prediction returned."),
+                    )
+                self._decode_busy = False
+                return
+            gloss_line, en = result
+            if not (gloss_line or "").strip():
+                if show_popups:
                     self.root.after(
                         0,
                         lambda: self.messagebox.showinfo(
-                            "Buffer", f"Need at least 16 frames in buffer (have {n})."
+                            "Decode",
+                            "No gloss decoded from current buffer.\n"
+                            "Try: Clear buffer -> perform sign for 2-3 seconds -> Decode now.",
                         ),
                     )
-                    return
-                result = self.demo.predict()
-            if not result:
-                self.root.after(
-                    0,
-                    lambda: self.messagebox.showinfo("Decode", "No prediction returned."),
-                )
+                self._decode_busy = False
                 return
-            gloss_line, en = result
 
             def apply() -> None:
                 self.txt_gloss.delete("1.0", self.tk.END)
                 self.txt_gloss.insert(self.tk.END, gloss_line or "")
                 self.txt_en.delete("1.0", self.tk.END)
                 self.txt_en.insert(self.tk.END, en or "")
+                self._decode_busy = False
 
             self.root.after(0, apply)
 
         threading.Thread(target=work, daemon=True).start()
+
+    def _toggle_stream_decode(self) -> None:
+        if self._stream_decode_enabled:
+            self._stop_stream_decode()
+            return
+
+        if self._cam_thread is None:
+            self.messagebox.showinfo("Auto decode", "Start camera first.")
+            return
+
+        self._stream_decode_enabled = True
+        self.btn_stream_decode.configure(text="Stop auto decode")
+        self._schedule_stream_decode()
+
+    def _stop_stream_decode(self) -> None:
+        self._stream_decode_enabled = False
+        self.btn_stream_decode.configure(text="Start auto decode")
+        if self._stream_decode_after_id is not None:
+            try:
+                self.root.after_cancel(self._stream_decode_after_id)
+            except Exception:
+                pass
+            self._stream_decode_after_id = None
+
+    def _schedule_stream_decode(self) -> None:
+        if not self._stream_decode_enabled:
+            return
+        self._run_decode_async(show_popups=False)
+        self._stream_decode_after_id = self.root.after(1200, self._schedule_stream_decode)
 
     def _load_pipeline_async(self) -> None:
         self.lbl_pipe.configure(text="Loading…")
@@ -277,6 +393,13 @@ class BidirectionalDemoApp:
             self.root.after(0, done)
 
         threading.Thread(target=work, daemon=True).start()
+
+    def _apply_demo_phrase(self) -> None:
+        phrase = self.cmb_demo_phrase.get().strip()
+        if not phrase:
+            return
+        self.entry_de.delete(0, self.tk.END)
+        self.entry_de.insert(0, phrase)
 
     def _stop_sign_playback(self) -> None:
         if self._after_play_id is not None:
@@ -351,6 +474,7 @@ class BidirectionalDemoApp:
         self._after_play_id = self.root.after(40, self._play_sign_frame)
 
     def _on_close(self) -> None:
+        self._stop_stream_decode()
         self._stop_sign_playback()
         self._cam_stop.set()
         if self._cam_thread is not None:
@@ -366,7 +490,7 @@ def main() -> None:
     parser.add_argument(
         "--checkpoint",
         type=str,
-        default="checkpoints/e2e/best.pth",
+        default="checkpoints/hybrid/best.pth",
         help="Hybrid SLR checkpoint",
     )
     parser.add_argument("--device", type=str, default="cuda")
